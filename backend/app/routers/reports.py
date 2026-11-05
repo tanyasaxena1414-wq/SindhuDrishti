@@ -132,9 +132,10 @@ async def get_report(
         raise HTTPException(status_code=404, detail="Report not found")
 
     include_reviewer = reviewer is not None
+    d = report.to_dict(include_reviewer_notes=include_reviewer)
     if include_reviewer:
-        return ReportDetailResponse.model_validate(report, from_attributes=True)
-    return ReportResponse.model_validate(report, from_attributes=True)
+        return ReportDetailResponse(**d)
+    return ReportResponse(**d)
 
 
 @router.patch(

@@ -1,0 +1,6 @@
+{
+  "name": "SindhuDrishti - Satellite Water Intelligence",
+  "description": "AI-powered satellite-based water pollution monitoring platform turning orbital observations into actionable environmental insights for aquatic ecosystems.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

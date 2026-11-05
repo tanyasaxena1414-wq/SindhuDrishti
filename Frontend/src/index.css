@@ -1,0 +1,90 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@layer base {
+  :root {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+/* Custom styling for inline-editable elements */
+[contenteditable="true"]:hover {
+  outline: 1px dashed rgba(6, 182, 212, 0.5);
+  cursor: text;
+}
+
+[contenteditable="true"]:focus {
+  outline: 1.5px solid #06b6d4;
+  border-radius: 4px;
+}
+
+/* Leaflet Dark Theme Overrides */
+.leaflet-container {
+  background-color: #02050f !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: #02071a !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+.leaflet-popup-tip {
+  background-color: #02071a !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-close-button {
+  color: #94a3b8 !important;
+  padding: 6px !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: #38bdf8 !important;
+}
+
+/* Custom Sleek Scrollbar for Modern Awwwards Look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020614;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0e2b5c;
+  border-radius: 9999px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0284c7;
+}
+
+/* Glassmorphism Ambient Glows */
+.glass-glow {
+  box-shadow: 0 0 50px -12px rgba(6, 182, 212, 0.18);
+}
+
+.text-glow {
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+}
+
+
+

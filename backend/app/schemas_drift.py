@@ -15,6 +15,8 @@ class DriftSimulateRequest(BaseModel):
     wind_speed_ms: float = Field(2.0, ge=0.0, le=20.0, description="Wind speed in m/s")
     wind_direction_deg: float = Field(90.0, ge=0.0, le=360.0, description="Wind direction in degrees")
     random_seed: Optional[int] = Field(42, description="Random seed for reproducibility")
+    hotspot_id: Optional[str] = Field(None, description="Optional ID of specific detected debris hotspot to track")
+    debris_name: Optional[str] = Field(None, description="Optional name of specific detected debris hotspot")
 
     @field_validator("latitude")
     @classmethod
@@ -42,6 +44,33 @@ class ParticleTrajectory(BaseModel):
     particle_id: int
     trajectory: List[DriftTrajectoryPoint]
     final_status: str
+
+
+class FieldAssetRequirement(BaseModel):
+    skimmer_boats: int = Field(..., description="Number of trash skimmer catamarans required")
+    containment_booms_meters: int = Field(..., description="Meters of heavy-duty deflection boom required")
+    field_crew_count: int = Field(..., description="Trained NGO/municipal recovery personnel")
+    estimated_extraction_hours: float = Field(..., description="Estimated operational hours needed for collection")
+
+
+class EconomicImpact(BaseModel):
+    estimated_debris_mass_kg: float = Field(..., description="Estimated debris weight in kg")
+    estimated_debris_mass_tons: float = Field(..., description="Estimated debris weight in metric tons")
+    infrastructure_damage_prevented_inr: float = Field(..., description="Estimated INR saved in turbine/canal damage")
+    infrastructure_damage_prevented_lakhs: float = Field(..., description="Estimated Lakhs INR saved")
+    recovery_roi_multiplier: float = Field(..., description="Economic prevention benefit vs extraction cost")
+
+
+class FieldDispatchOrder(BaseModel):
+    order_id: str
+    target_debris_id: Optional[str]
+    target_name: str
+    target_latitude: float
+    target_longitude: float
+    priority_level: str
+    critical_interception_window: str
+    optimal_staging_area: str
+    recommended_tactics: List[str]
 
 
 class DriftSimulateResponse(BaseModel):

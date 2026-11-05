@@ -53,6 +53,7 @@ class ReportResponse(BaseModel):
     photo_reference: Optional[str] = None
     status: ReportStatus
     submitted_at: str
+    ai_vision_analysis: Optional[dict] = None
 
     @field_validator("submitted_at", mode="before")
     @classmethod

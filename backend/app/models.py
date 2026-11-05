@@ -41,6 +41,19 @@ class PollutionReport(Base):
             "status": self.status.value,
             "submitted_at": self.submitted_at.isoformat() + "Z" if self.submitted_at else None,
         }
+        try:
+            from app.services.vision_classifier import classify_citizen_evidence
+            lat_f = float(self.latitude)
+            lon_f = float(self.longitude)
+            result["ai_vision_analysis"] = classify_citizen_evidence(
+                self.photo_reference,
+                self.description,
+                lat_f,
+                lon_f
+            )
+        except Exception:
+            result["ai_vision_analysis"] = None
+
         if include_reviewer_notes:
             result["reviewer_notes"] = self.reviewer_notes
             result["reviewed_at"] = self.reviewed_at.isoformat() + "Z" if self.reviewed_at else None

@@ -33,6 +33,11 @@ async def override_get_db():
 app.dependency_overrides[get_db] = override_get_db
 
 
+@pytest.fixture
+def anyio_backend():
+    return "asyncio"
+
+
 @pytest.fixture(autouse=True)
 async def setup_test_db_and_clear():
     """Initialize the test database and clear before each test."""

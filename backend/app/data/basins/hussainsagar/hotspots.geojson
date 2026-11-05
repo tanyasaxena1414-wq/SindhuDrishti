@@ -1,0 +1,1325 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-1",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47285000000001,
+              17.435775
+            ],
+            [
+              78.47415,
+              17.435775
+            ],
+            [
+              78.47402,
+              17.43636
+            ],
+            [
+              78.47298,
+              17.43636
+            ],
+            [
+              78.47285000000001,
+              17.435775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-1",
+        "candidate_id": 1,
+        "name": "Picket Nala Inflow Macroplastic Plume",
+        "area_m2": 3450.0,
+        "count": 38,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 45.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.845,
+        "fdi_value": 0.048,
+        "ndvi_value": 0.18,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-2",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47435,
+              17.434775
+            ],
+            [
+              78.47564999999999,
+              17.434775
+            ],
+            [
+              78.47551999999999,
+              17.43536
+            ],
+            [
+              78.47448,
+              17.43536
+            ],
+            [
+              78.47435,
+              17.434775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-2",
+        "candidate_id": 2,
+        "name": "Sanjeevaiah Park Embayment Hyacinth Trap",
+        "area_m2": 4820.0,
+        "count": 52,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 70.0,
+        "spectral_class": "dense_vegetation_hyacinth",
+        "marida_class": "dense_vegetation_hyacinth",
+        "confidence_score": 0.87,
+        "fdi_value": 0.022,
+        "ndvi_value": 0.74,
+        "is_organic_vegetation": true,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-3",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.48335,
+              17.422774999999998
+            ],
+            [
+              78.48464999999999,
+              17.422774999999998
+            ],
+            [
+              78.48451999999999,
+              17.42336
+            ],
+            [
+              78.48348,
+              17.42336
+            ],
+            [
+              78.48335,
+              17.422774999999998
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-3",
+        "candidate_id": 3,
+        "name": "Tank Bund Central Immersion Ghat Residue",
+        "area_m2": 2900.0,
+        "count": 31,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 35.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.895,
+        "fdi_value": 0.044,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-4",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.48355000000001,
+              17.426275
+            ],
+            [
+              78.48485,
+              17.426275
+            ],
+            [
+              78.48472,
+              17.42686
+            ],
+            [
+              78.48368,
+              17.42686
+            ],
+            [
+              78.48355000000001,
+              17.426275
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-4",
+        "candidate_id": 4,
+        "name": "Tank Bund North Shoreline Plastic Windrow",
+        "area_m2": 2150.0,
+        "count": 24,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 40.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.92,
+        "fdi_value": 0.041,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-5",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.48285000000001,
+              17.428774999999998
+            ],
+            [
+              78.48415,
+              17.428774999999998
+            ],
+            [
+              78.48402,
+              17.42936
+            ],
+            [
+              78.48298000000001,
+              17.42936
+            ],
+            [
+              78.48285000000001,
+              17.428774999999998
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-5",
+        "candidate_id": 5,
+        "name": "Ranigunj Municipal Runoff Windrow",
+        "area_m2": 3100.0,
+        "count": 34,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 55.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.945,
+        "fdi_value": 0.046,
+        "ndvi_value": 0.19,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-6",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47985000000001,
+              17.432275
+            ],
+            [
+              78.48115,
+              17.432275
+            ],
+            [
+              78.48102,
+              17.43286
+            ],
+            [
+              78.47998000000001,
+              17.43286
+            ],
+            [
+              78.47985000000001,
+              17.432275
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-6",
+        "candidate_id": 6,
+        "name": "Secunderabad Sailing Annex Debris Cluster",
+        "area_m2": 1850.0,
+        "count": 21,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 220.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.82,
+        "fdi_value": 0.038,
+        "ndvi_value": 0.17,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-7",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47395,
+              17.423975
+            ],
+            [
+              78.47524999999999,
+              17.423975
+            ],
+            [
+              78.47511999999999,
+              17.42456
+            ],
+            [
+              78.47408,
+              17.42456
+            ],
+            [
+              78.47395,
+              17.423975
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-7",
+        "candidate_id": 7,
+        "name": "Gibraltar Rock / Buddha Statue Forebay Windrow",
+        "area_m2": 2600.0,
+        "count": 29,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 480.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.845,
+        "fdi_value": 0.043,
+        "ndvi_value": 0.14,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-8",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47185,
+              17.425275
+            ],
+            [
+              78.47314999999999,
+              17.425275
+            ],
+            [
+              78.47301999999999,
+              17.42586
+            ],
+            [
+              78.47198,
+              17.42586
+            ],
+            [
+              78.47185,
+              17.425275
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-8",
+        "candidate_id": 8,
+        "name": "Mid-Lake Deep Circulation Debris Streak",
+        "area_m2": 3800.0,
+        "count": 42,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 620.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.87,
+        "fdi_value": 0.045,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-9",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.46935,
+              17.426775
+            ],
+            [
+              78.47064999999999,
+              17.426775
+            ],
+            [
+              78.47052,
+              17.42736
+            ],
+            [
+              78.46948,
+              17.42736
+            ],
+            [
+              78.46935,
+              17.426775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-9",
+        "candidate_id": 9,
+        "name": "West Basin Central Langmuir Convergence",
+        "area_m2": 3200.0,
+        "count": 35,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 510.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.895,
+        "fdi_value": 0.042,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-10",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.46185000000001,
+              17.428774999999998
+            ],
+            [
+              78.46315,
+              17.428774999999998
+            ],
+            [
+              78.46302,
+              17.42936
+            ],
+            [
+              78.46198000000001,
+              17.42936
+            ],
+            [
+              78.46185000000001,
+              17.428774999999998
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-10",
+        "candidate_id": 10,
+        "name": "Jalavihar Water Edge Accumulated Bottles",
+        "area_m2": 2400.0,
+        "count": 26,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 60.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.92,
+        "fdi_value": 0.04,
+        "ndvi_value": 0.18,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-11",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.45985,
+              17.425774999999998
+            ],
+            [
+              78.46114999999999,
+              17.425774999999998
+            ],
+            [
+              78.46101999999999,
+              17.42636
+            ],
+            [
+              78.45998,
+              17.42636
+            ],
+            [
+              78.45985,
+              17.425774999999998
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-11",
+        "candidate_id": 11,
+        "name": "Necklace Road Promenade Plastic Windrow",
+        "area_m2": 2750.0,
+        "count": 30,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 50.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.945,
+        "fdi_value": 0.043,
+        "ndvi_value": 0.17,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-12",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.45935,
+              17.421775
+            ],
+            [
+              78.46064999999999,
+              17.421775
+            ],
+            [
+              78.46051999999999,
+              17.42236
+            ],
+            [
+              78.45948,
+              17.42236
+            ],
+            [
+              78.45935,
+              17.421775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-12",
+        "candidate_id": 12,
+        "name": "People's Plaza Shoreline Debris Front",
+        "area_m2": 2250.0,
+        "count": 25,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 45.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.82,
+        "fdi_value": 0.039,
+        "ndvi_value": 0.19,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-13",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.46135000000001,
+              17.418275
+            ],
+            [
+              78.46265,
+              17.418275
+            ],
+            [
+              78.46252,
+              17.418860000000002
+            ],
+            [
+              78.46148000000001,
+              17.418860000000002
+            ],
+            [
+              78.46135000000001,
+              17.418275
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-13",
+        "candidate_id": 13,
+        "name": "Khairatabad Flyover Approach Outfall",
+        "area_m2": 3600.0,
+        "count": 40,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 65.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.845,
+        "fdi_value": 0.047,
+        "ndvi_value": 0.21,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-14",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.46535,
+              17.415775
+            ],
+            [
+              78.46664999999999,
+              17.415775
+            ],
+            [
+              78.46651999999999,
+              17.41636
+            ],
+            [
+              78.46548,
+              17.41636
+            ],
+            [
+              78.46535,
+              17.415775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-14",
+        "candidate_id": 14,
+        "name": "Imax / Lumbini West Embayment Foam & Plastic",
+        "area_m2": 2950.0,
+        "count": 32,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 55.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.87,
+        "fdi_value": 0.044,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-15",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47135,
+              17.414775
+            ],
+            [
+              78.47264999999999,
+              17.414775
+            ],
+            [
+              78.47251999999999,
+              17.41536
+            ],
+            [
+              78.47148,
+              17.41536
+            ],
+            [
+              78.47135,
+              17.414775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-15",
+        "candidate_id": 15,
+        "name": "Lumbini Park Jetty Discarded Packaging",
+        "area_m2": 1950.0,
+        "count": 22,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 40.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.895,
+        "fdi_value": 0.037,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-16",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47535,
+              17.415275
+            ],
+            [
+              78.47664999999999,
+              17.415275
+            ],
+            [
+              78.47652,
+              17.415860000000002
+            ],
+            [
+              78.47548,
+              17.415860000000002
+            ],
+            [
+              78.47535,
+              17.415275
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-16",
+        "candidate_id": 16,
+        "name": "Secretariat Shoreline Mixed Plastic Barrier",
+        "area_m2": 2300.0,
+        "count": 25,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 50.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.92,
+        "fdi_value": 0.041,
+        "ndvi_value": 0.18,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-17",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47885000000001,
+              17.416775
+            ],
+            [
+              78.48015,
+              17.416775
+            ],
+            [
+              78.48002,
+              17.417360000000002
+            ],
+            [
+              78.47898,
+              17.417360000000002
+            ],
+            [
+              78.47885000000001,
+              17.416775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-17",
+        "candidate_id": 17,
+        "name": "Telangana Tourism Boating Forebay Cluster",
+        "area_m2": 1700.0,
+        "count": 19,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 180.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.945,
+        "fdi_value": 0.036,
+        "ndvi_value": 0.14,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-18",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.46735000000001,
+              17.432775
+            ],
+            [
+              78.46865,
+              17.432775
+            ],
+            [
+              78.46852,
+              17.43336
+            ],
+            [
+              78.46748000000001,
+              17.43336
+            ],
+            [
+              78.46735000000001,
+              17.432775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-18",
+        "candidate_id": 18,
+        "name": "Northwest Vegetated Plastic Windrow",
+        "area_m2": 3400.0,
+        "count": 37,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 85.0,
+        "spectral_class": "dense_vegetation_hyacinth",
+        "marida_class": "dense_vegetation_hyacinth",
+        "confidence_score": 0.82,
+        "fdi_value": 0.025,
+        "ndvi_value": 0.68,
+        "is_organic_vegetation": true,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-19",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47235,
+              17.428774999999998
+            ],
+            [
+              78.47364999999999,
+              17.428774999999998
+            ],
+            [
+              78.47352,
+              17.42936
+            ],
+            [
+              78.47248,
+              17.42936
+            ],
+            [
+              78.47235,
+              17.428774999999998
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-19",
+        "candidate_id": 19,
+        "name": "North Central Open Water Streak",
+        "area_m2": 2800.0,
+        "count": 31,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 420.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.845,
+        "fdi_value": 0.042,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-20",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47535,
+              17.427775
+            ],
+            [
+              78.47664999999999,
+              17.427775
+            ],
+            [
+              78.47652,
+              17.42836
+            ],
+            [
+              78.47548,
+              17.42836
+            ],
+            [
+              78.47535,
+              17.427775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-20",
+        "candidate_id": 20,
+        "name": "Northeast Deep Water Circulation Windrow",
+        "area_m2": 3150.0,
+        "count": 35,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 390.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.87,
+        "fdi_value": 0.045,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-21",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.46435000000001,
+              17.423775
+            ],
+            [
+              78.46565,
+              17.423775
+            ],
+            [
+              78.46552,
+              17.42436
+            ],
+            [
+              78.46448000000001,
+              17.42436
+            ],
+            [
+              78.46435000000001,
+              17.423775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-21",
+        "candidate_id": 21,
+        "name": "West Central Pelagic Floating Island",
+        "area_m2": 2500.0,
+        "count": 28,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 340.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.895,
+        "fdi_value": 0.041,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-22",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.46935,
+              17.419775
+            ],
+            [
+              78.47064999999999,
+              17.419775
+            ],
+            [
+              78.47052,
+              17.420360000000002
+            ],
+            [
+              78.46948,
+              17.420360000000002
+            ],
+            [
+              78.46935,
+              17.419775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-22",
+        "candidate_id": 22,
+        "name": "South Central Flow Convergence Cluster",
+        "area_m2": 2100.0,
+        "count": 23,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 310.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.92,
+        "fdi_value": 0.039,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-23",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.47635000000001,
+              17.420775
+            ],
+            [
+              78.47765,
+              17.420775
+            ],
+            [
+              78.47752,
+              17.42136
+            ],
+            [
+              78.47648000000001,
+              17.42136
+            ],
+            [
+              78.47635000000001,
+              17.420775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-23",
+        "candidate_id": 23,
+        "name": "East Bay Sub-Surface Debris Windrow",
+        "area_m2": 1900.0,
+        "count": 21,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 260.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.945,
+        "fdi_value": 0.038,
+        "ndvi_value": 0.14,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hussain-hotspot-24",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.46735000000001,
+              17.435775
+            ],
+            [
+              78.46865,
+              17.435775
+            ],
+            [
+              78.46852,
+              17.43636
+            ],
+            [
+              78.46748000000001,
+              17.43636
+            ],
+            [
+              78.46735000000001,
+              17.435775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "hussain-hotspot-24",
+        "candidate_id": 24,
+        "name": "Kukatpally Confluence Hyacinth-Plastic Mat",
+        "area_m2": 5200.0,
+        "count": 58,
+        "source": "Copernicus Sentinel-2B L2A (Tile 44QND)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 40.0,
+        "spectral_class": "dense_vegetation_hyacinth",
+        "marida_class": "dense_vegetation_hyacinth",
+        "confidence_score": 0.82,
+        "fdi_value": 0.028,
+        "ndvi_value": 0.78,
+        "is_organic_vegetation": true,
+        "satellite_platform": "Sentinel-2B",
+        "acquisition_datetime": "2026-10-24T05:32:11Z",
+        "cloud_cover_percent": 0.02,
+        "tile_id": "44QND",
+        "basin_id": "hussainsagar",
+        "waterbody": "Hussain Sagar Lake"
+      }
+    }
+  ]
+}

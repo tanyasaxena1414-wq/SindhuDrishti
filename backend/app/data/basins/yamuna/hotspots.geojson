@@ -1,0 +1,1545 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-1",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2324,
+              28.7048
+            ],
+            [
+              77.23360000000001,
+              28.7048
+            ],
+            [
+              77.23348,
+              28.70545
+            ],
+            [
+              77.23252000000001,
+              28.70545
+            ],
+            [
+              77.2324,
+              28.7048
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-1",
+        "candidate_id": 1,
+        "name": "Wazirabad Barrage Debris Boom Accumulation",
+        "area_m2": 4200.0,
+        "count": 46,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 25.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.854,
+        "fdi_value": 0.052,
+        "ndvi_value": 0.17,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-2",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2344,
+              28.6978
+            ],
+            [
+              77.2356,
+              28.6978
+            ],
+            [
+              77.23548,
+              28.69845
+            ],
+            [
+              77.23452,
+              28.69845
+            ],
+            [
+              77.2344,
+              28.6978
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-2",
+        "candidate_id": 2,
+        "name": "Najafgarh Drain Outfall High-Density Plume",
+        "area_m2": 5100.0,
+        "count": 56,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 30.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.878,
+        "fdi_value": 0.056,
+        "ndvi_value": 0.22,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-3",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2359,
+              28.6918
+            ],
+            [
+              77.23710000000001,
+              28.6918
+            ],
+            [
+              77.23698,
+              28.69245
+            ],
+            [
+              77.23602000000001,
+              28.69245
+            ],
+            [
+              77.2359,
+              28.6918
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-3",
+        "candidate_id": 3,
+        "name": "Majnu Ka Tilla Embayment Floating Litter",
+        "area_m2": 2800.0,
+        "count": 31,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 40.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.902,
+        "fdi_value": 0.043,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-4",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2374,
+              28.6848
+            ],
+            [
+              77.2386,
+              28.6848
+            ],
+            [
+              77.23848,
+              28.68545
+            ],
+            [
+              77.23752,
+              28.68545
+            ],
+            [
+              77.2374,
+              28.6848
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-4",
+        "candidate_id": 4,
+        "name": "Timarpur Drain Confluence Plastic Windrow",
+        "area_m2": 3600.0,
+        "count": 40,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 35.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.926,
+        "fdi_value": 0.047,
+        "ndvi_value": 0.19,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-5",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2384,
+              28.6788
+            ],
+            [
+              77.23960000000001,
+              28.6788
+            ],
+            [
+              77.23948,
+              28.67945
+            ],
+            [
+              77.23852000000001,
+              28.67945
+            ],
+            [
+              77.2384,
+              28.6788
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-5",
+        "candidate_id": 5,
+        "name": "Metcalfe House Channel Floating Debris",
+        "area_m2": 2200.0,
+        "count": 24,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 110.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.95,
+        "fdi_value": 0.039,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-6",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2392,
+              28.6728
+            ],
+            [
+              77.24040000000001,
+              28.6728
+            ],
+            [
+              77.24028,
+              28.67345
+            ],
+            [
+              77.23932,
+              28.67345
+            ],
+            [
+              77.2392,
+              28.6728
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-6",
+        "candidate_id": 6,
+        "name": "Kashmere Gate ISBT Riverbank Deposit",
+        "area_m2": 3900.0,
+        "count": 43,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 30.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.83,
+        "fdi_value": 0.048,
+        "ndvi_value": 0.18,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-7",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.23639999999999,
+              28.6708
+            ],
+            [
+              77.2376,
+              28.6708
+            ],
+            [
+              77.23747999999999,
+              28.67145
+            ],
+            [
+              77.23652,
+              28.67145
+            ],
+            [
+              77.23639999999999,
+              28.6708
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-7",
+        "candidate_id": 7,
+        "name": "Monastery Market Water Edge Macroplastics",
+        "area_m2": 2600.0,
+        "count": 29,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 25.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.854,
+        "fdi_value": 0.041,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-8",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2409,
+              28.6648
+            ],
+            [
+              77.24210000000001,
+              28.6648
+            ],
+            [
+              77.24198,
+              28.66545
+            ],
+            [
+              77.24102,
+              28.66545
+            ],
+            [
+              77.2409,
+              28.6648
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-8",
+        "candidate_id": 8,
+        "name": "Nigambodh Ghat Religious Immersion Waste",
+        "area_m2": 3100.0,
+        "count": 34,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 20.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.878,
+        "fdi_value": 0.044,
+        "ndvi_value": 0.17,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-9",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.24289999999999,
+              28.6578
+            ],
+            [
+              77.2441,
+              28.6578
+            ],
+            [
+              77.24398,
+              28.658450000000002
+            ],
+            [
+              77.24302,
+              28.658450000000002
+            ],
+            [
+              77.24289999999999,
+              28.6578
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-9",
+        "candidate_id": 9,
+        "name": "Old Railway Bridge (Loha Pul) Pier Netting",
+        "area_m2": 4500.0,
+        "count": 50,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 80.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.902,
+        "fdi_value": 0.051,
+        "ndvi_value": 0.18,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-10",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.23989999999999,
+              28.6548
+            ],
+            [
+              77.2411,
+              28.6548
+            ],
+            [
+              77.24098,
+              28.655450000000002
+            ],
+            [
+              77.24002,
+              28.655450000000002
+            ],
+            [
+              77.23989999999999,
+              28.6548
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-10",
+        "candidate_id": 10,
+        "name": "Kudsia Ghat Vegetated Plastic Accumulation",
+        "area_m2": 3300.0,
+        "count": 36,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 45.0,
+        "spectral_class": "dense_vegetation_hyacinth",
+        "marida_class": "dense_vegetation_hyacinth",
+        "confidence_score": 0.926,
+        "fdi_value": 0.026,
+        "ndvi_value": 0.71,
+        "is_organic_vegetation": true,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-11",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.24539999999999,
+              28.6508
+            ],
+            [
+              77.2466,
+              28.6508
+            ],
+            [
+              77.24647999999999,
+              28.65145
+            ],
+            [
+              77.24552,
+              28.65145
+            ],
+            [
+              77.24539999999999,
+              28.6508
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-11",
+        "candidate_id": 11,
+        "name": "Geeta Colony Bridge Approach Thalweg Debris",
+        "area_m2": 2900.0,
+        "count": 32,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 130.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.95,
+        "fdi_value": 0.042,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-12",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2479,
+              28.6458
+            ],
+            [
+              77.24910000000001,
+              28.6458
+            ],
+            [
+              77.24898,
+              28.64645
+            ],
+            [
+              77.24802000000001,
+              28.64645
+            ],
+            [
+              77.2479,
+              28.6458
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-12",
+        "candidate_id": 12,
+        "name": "Geeta Colony Slum Runoff Plastic Streak",
+        "area_m2": 3700.0,
+        "count": 41,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 35.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.83,
+        "fdi_value": 0.046,
+        "ndvi_value": 0.19,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-13",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.24889999999999,
+              28.6408
+            ],
+            [
+              77.2501,
+              28.6408
+            ],
+            [
+              77.24998,
+              28.64145
+            ],
+            [
+              77.24902,
+              28.64145
+            ],
+            [
+              77.24889999999999,
+              28.6408
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-13",
+        "candidate_id": 13,
+        "name": "Raj Ghat Power Plant Drain Outfall",
+        "area_m2": 4100.0,
+        "count": 45,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 25.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.854,
+        "fdi_value": 0.049,
+        "ndvi_value": 0.2,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-14",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.25089999999999,
+              28.6358
+            ],
+            [
+              77.2521,
+              28.6358
+            ],
+            [
+              77.25197999999999,
+              28.63645
+            ],
+            [
+              77.25102,
+              28.63645
+            ],
+            [
+              77.25089999999999,
+              28.6358
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-14",
+        "candidate_id": 14,
+        "name": "Shanti Vana Low-Velocity Eddy Trap",
+        "area_m2": 2700.0,
+        "count": 30,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 140.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.878,
+        "fdi_value": 0.04,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-15",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2524,
+              28.6308
+            ],
+            [
+              77.2536,
+              28.6308
+            ],
+            [
+              77.25348,
+              28.63145
+            ],
+            [
+              77.25252,
+              28.63145
+            ],
+            [
+              77.2524,
+              28.6308
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-15",
+        "candidate_id": 15,
+        "name": "ITO Barrage Sluice Weir Industrial Foam & Plastic",
+        "area_m2": 6200.0,
+        "count": 68,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 20.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.902,
+        "fdi_value": 0.058,
+        "ndvi_value": 0.18,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-16",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2504,
+              28.628800000000002
+            ],
+            [
+              77.25160000000001,
+              28.628800000000002
+            ],
+            [
+              77.25148,
+              28.629450000000002
+            ],
+            [
+              77.25052000000001,
+              28.629450000000002
+            ],
+            [
+              77.2504,
+              28.628800000000002
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-16",
+        "candidate_id": 16,
+        "name": "Vikas Marg Bridge Pier Debris Trap",
+        "area_m2": 3400.0,
+        "count": 38,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 90.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.926,
+        "fdi_value": 0.045,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-17",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.25389999999999,
+              28.6248
+            ],
+            [
+              77.2551,
+              28.6248
+            ],
+            [
+              77.25497999999999,
+              28.62545
+            ],
+            [
+              77.25402,
+              28.62545
+            ],
+            [
+              77.25389999999999,
+              28.6248
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-17",
+        "candidate_id": 17,
+        "name": "Indraprastha Power Station Lagoon Outflow",
+        "area_m2": 4300.0,
+        "count": 47,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 40.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.95,
+        "fdi_value": 0.05,
+        "ndvi_value": 0.21,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-18",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2529,
+              28.6198
+            ],
+            [
+              77.25410000000001,
+              28.6198
+            ],
+            [
+              77.25398,
+              28.62045
+            ],
+            [
+              77.25302,
+              28.62045
+            ],
+            [
+              77.2529,
+              28.6198
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-18",
+        "candidate_id": 18,
+        "name": "Millennium Park Waterway Channel Streak",
+        "area_m2": 2500.0,
+        "count": 28,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 160.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.83,
+        "fdi_value": 0.038,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-19",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2554,
+              28.6138
+            ],
+            [
+              77.2566,
+              28.6138
+            ],
+            [
+              77.25648,
+              28.61445
+            ],
+            [
+              77.25552,
+              28.61445
+            ],
+            [
+              77.2554,
+              28.6138
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-19",
+        "candidate_id": 19,
+        "name": "Sarai Kale Khan Highway Bridge Windrow",
+        "area_m2": 3200.0,
+        "count": 35,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 110.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.854,
+        "fdi_value": 0.043,
+        "ndvi_value": 0.17,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-20",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.25689999999999,
+              28.6078
+            ],
+            [
+              77.2581,
+              28.6078
+            ],
+            [
+              77.25797999999999,
+              28.60845
+            ],
+            [
+              77.25702,
+              28.60845
+            ],
+            [
+              77.25689999999999,
+              28.6078
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-20",
+        "candidate_id": 20,
+        "name": "Barapullah Drain Confluence Urban Plastic Mat",
+        "area_m2": 5400.0,
+        "count": 59,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 30.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.878,
+        "fdi_value": 0.055,
+        "ndvi_value": 0.23,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-21",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2584,
+              28.6018
+            ],
+            [
+              77.2596,
+              28.6018
+            ],
+            [
+              77.25948,
+              28.60245
+            ],
+            [
+              77.25852,
+              28.60245
+            ],
+            [
+              77.2584,
+              28.6018
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-21",
+        "candidate_id": 21,
+        "name": "Nizamuddin Railway Bridge Pier Jam",
+        "area_m2": 3800.0,
+        "count": 42,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 75.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.902,
+        "fdi_value": 0.047,
+        "ndvi_value": 0.17,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-22",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.26039999999999,
+              28.5958
+            ],
+            [
+              77.2616,
+              28.5958
+            ],
+            [
+              77.26147999999999,
+              28.59645
+            ],
+            [
+              77.26052,
+              28.59645
+            ],
+            [
+              77.26039999999999,
+              28.5958
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-22",
+        "candidate_id": 22,
+        "name": "DND Flyway Approach Thalweg Macroplastics",
+        "area_m2": 3500.0,
+        "count": 39,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 150.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.926,
+        "fdi_value": 0.044,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-23",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.25739999999999,
+              28.5918
+            ],
+            [
+              77.2586,
+              28.5918
+            ],
+            [
+              77.25847999999999,
+              28.59245
+            ],
+            [
+              77.25752,
+              28.59245
+            ],
+            [
+              77.25739999999999,
+              28.5918
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-23",
+        "candidate_id": 23,
+        "name": "Sunlight Colony Riverbank Plastic Deposits",
+        "area_m2": 2800.0,
+        "count": 31,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 35.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.95,
+        "fdi_value": 0.041,
+        "ndvi_value": 0.18,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-24",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2624,
+              28.5868
+            ],
+            [
+              77.26360000000001,
+              28.5868
+            ],
+            [
+              77.26348,
+              28.58745
+            ],
+            [
+              77.26252000000001,
+              28.58745
+            ],
+            [
+              77.2624,
+              28.5868
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-24",
+        "candidate_id": 24,
+        "name": "Okhla Bird Sanctuary Buffer Zone Hyacinth",
+        "area_m2": 4900.0,
+        "count": 53,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 60.0,
+        "spectral_class": "dense_vegetation_hyacinth",
+        "marida_class": "dense_vegetation_hyacinth",
+        "confidence_score": 0.83,
+        "fdi_value": 0.027,
+        "ndvi_value": 0.76,
+        "is_organic_vegetation": true,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-25",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.26389999999999,
+              28.5828
+            ],
+            [
+              77.2651,
+              28.5828
+            ],
+            [
+              77.26498,
+              28.58345
+            ],
+            [
+              77.26402,
+              28.58345
+            ],
+            [
+              77.26389999999999,
+              28.5828
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-25",
+        "candidate_id": 25,
+        "name": "Jamia Nagar Outfall Macroplastic Plume",
+        "area_m2": 4600.0,
+        "count": 51,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 25.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.854,
+        "fdi_value": 0.052,
+        "ndvi_value": 0.2,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-26",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.26089999999999,
+              28.5808
+            ],
+            [
+              77.2621,
+              28.5808
+            ],
+            [
+              77.26198,
+              28.58145
+            ],
+            [
+              77.26102,
+              28.58145
+            ],
+            [
+              77.26089999999999,
+              28.5808
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-26",
+        "candidate_id": 26,
+        "name": "Okhla Barrage Approach Debris Island",
+        "area_m2": 5800.0,
+        "count": 64,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 95.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.878,
+        "fdi_value": 0.057,
+        "ndvi_value": 0.19,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-27",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2464,
+              28.6478
+            ],
+            [
+              77.2476,
+              28.6478
+            ],
+            [
+              77.24748,
+              28.64845
+            ],
+            [
+              77.24652,
+              28.64845
+            ],
+            [
+              77.2464,
+              28.6478
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-27",
+        "candidate_id": 27,
+        "name": "East Delhi Embankment Floodplain Litter",
+        "area_m2": 2300.0,
+        "count": 25,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "shoreline",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 40.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.902,
+        "fdi_value": 0.039,
+        "ndvi_value": 0.16,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "yamuna-hotspot-28",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2414,
+              28.6618
+            ],
+            [
+              77.24260000000001,
+              28.6618
+            ],
+            [
+              77.24248,
+              28.66245
+            ],
+            [
+              77.24152000000001,
+              28.66245
+            ],
+            [
+              77.2414,
+              28.6618
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "yamuna-hotspot-28",
+        "candidate_id": 28,
+        "name": "Salimgarh Fort Channel Floating Windrow",
+        "area_m2": 2700.0,
+        "count": 30,
+        "source": "Copernicus Sentinel-2A L2A (Tile 43REQ)",
+        "status": "unverified_candidate",
+        "zone_type": "open_water",
+        "is_shoreline_edge_artifact": false,
+        "distance_to_shore_m": 120.0,
+        "spectral_class": "candidate_plastic_debris",
+        "marida_class": "candidate_plastic_debris",
+        "confidence_score": 0.926,
+        "fdi_value": 0.042,
+        "ndvi_value": 0.15,
+        "is_organic_vegetation": false,
+        "satellite_platform": "Sentinel-2A",
+        "acquisition_datetime": "2026-10-23T05:40:22Z",
+        "cloud_cover_percent": 0.04,
+        "tile_id": "43REQ",
+        "basin_id": "yamuna",
+        "waterbody": "Yamuna River Corridor"
+      }
+    }
+  ]
+}

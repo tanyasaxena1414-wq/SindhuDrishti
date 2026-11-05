@@ -16,7 +16,7 @@ async def test_dashboard_stats_empty_database(client):
     data = response.json()
 
     # Should have satellite data
-    assert data["candidate_hotspots"] == 129
+    assert data["candidate_hotspots"] == 141
     assert data["water_mask_features"] == 2
 
     # Citizen reports should be zero
@@ -89,11 +89,11 @@ async def test_cleanup_priorities_empty_database(client):
     assert response.status_code == 200
     data = response.json()
 
-    assert data["total"] == 129  # Only satellite hotspots
+    assert data["total"] == 141  # 129 shoreline + 12 open-water pelagic windrows
     assert len(data["priorities"]) == 20  # Default page size
     assert data["page"] == 1
     assert data["page_size"] == 20
-    assert data["total_pages"] == 7  # 129 / 20 = 6.45 -> 7 pages
+    assert data["total_pages"] == 8  # 141 / 20 = 7.05 -> 8 pages
 
     # Check structure
     first = data["priorities"][0]
@@ -143,7 +143,7 @@ async def test_cleanup_priorities_with_reports(client):
     assert response.status_code == 200
     data = response.json()
 
-    assert data["total"] == 131  # 129 hotspots + 2 reports
+    assert data["total"] == 143  # 141 hotspots + 2 reports
     sources = [p["source"] for p in data["priorities"]]
     assert "citizen_report" in sources
 
@@ -157,7 +157,7 @@ async def test_cleanup_priorities_pagination(client):
     assert data["page"] == 1
     assert data["page_size"] == 10
     assert len(data["priorities"]) == 10
-    assert data["total_pages"] == 13  # 129 / 10 = 12.9 -> 13
+    assert data["total_pages"] == 15  # 141 / 10 = 14.1 -> 15
 
     response = await client.get("/api/v1/dashboard/cleanup/priorities?page=2&page_size=10")
     assert response.status_code == 200

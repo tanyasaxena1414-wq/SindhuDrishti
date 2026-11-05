@@ -68,27 +68,27 @@ async def get_dashboard_stats(db: AsyncSession) -> DashboardStats:
     )
 
 
-def _compute_hotspot_priority(feat: Dict[str, Any]) -> CleanupPriorityItem:
+def _compute_hotspot_priority(feat: Dict[str, Any], index: int = 0) -> CleanupPriorityItem:
     """Compute priority score for a satellite candidate hotspot."""
     props = feat.get("properties", {})
     geom = feat.get("geometry", {})
 
-    # Extract coordinates (centroid of first ring for Polygon)
+    # Extract coordinates recursively for both Polygon and MultiPolygon
     coords = geom.get("coordinates", [])
+    valid_pts: List[tuple[float, float]] = []
+
+    def _extract_pts(c: Any) -> None:
+        if isinstance(c, (list, tuple)) and len(c) >= 2 and isinstance(c[0], (int, float)) and isinstance(c[1], (int, float)):
+            valid_pts.append((float(c[0]), float(c[1])))
+        elif isinstance(c, (list, tuple)):
+            for sub in c:
+                _extract_pts(sub)
+
+    _extract_pts(coords)
     centroid_lon, centroid_lat = 0.0, 0.0
-    if coords and len(coords) > 0:
-        ring = coords[0]
-        if ring and isinstance(ring, list) and len(ring) > 0:
-            valid_pts = []
-            for pt in ring:
-                if isinstance(pt, list) and len(pt) >= 2:
-                    try:
-                        valid_pts.append((float(pt[0]), float(pt[1])))
-                    except (ValueError, TypeError):
-                        pass
-            if valid_pts:
-                centroid_lon = sum(pt[0] for pt in valid_pts) / len(valid_pts)
-                centroid_lat = sum(pt[1] for pt in valid_pts) / len(valid_pts)
+    if valid_pts:
+        centroid_lon = round(sum(pt[0] for pt in valid_pts) / len(valid_pts), 6)
+        centroid_lat = round(sum(pt[1] for pt in valid_pts) / len(valid_pts), 6)
 
     area_m2 = props.get("area_m2", 0.0)
     count = props.get("count", 0)
@@ -97,57 +97,63 @@ def _compute_hotspot_priority(feat: Dict[str, Any]) -> CleanupPriorityItem:
     # Transparent scoring factors
     factors = []
 
-    # Factor 1: Area (larger anomalies may indicate more debris)
-    # Normalize: log10(area) / log10(max_expected_area) - capped at 1.0
-    import math
-    max_area = 100000.0  # 100,000 m² as reference max
-    area_score = min(math.log10(area_m2 + 1) / math.log10(max_area + 1), 1.0) if area_m2 > 0 else 0.0
+    # Factor 1: Surface Area Accumulation (scaled across 5,000 to 50,000 m² range)
+    area_score = min(max((area_m2 - 5000.0) / 45000.0, 0.1), 1.0) if area_m2 > 0 else 0.1
     factors.append(CleanupPriorityFactor(
         name="anomaly_area_m2",
         value=area_m2,
         weight=0.4,
-        description="Larger anomaly area may indicate more debris accumulation",
+        description="Accumulated surface area from multi-spectral footprint",
     ))
 
-    # Factor 2: Detection count (more detections = more persistent)
-    max_count = 50.0
-    count_score = min(count / max_count, 1.0) if count > 0 else 0.0
+    # Factor 2: Detection Persistence (scaled across 15 to 80 passes)
+    count_score = min(max((count - 15.0) / 65.0, 0.15), 1.0) if count > 0 else 0.15
     factors.append(CleanupPriorityFactor(
         name="detection_count",
         value=float(count),
         weight=0.3,
-        description="Number of times anomaly was detected in satellite imagery",
+        description="Multi-pass temporal persistence across satellite acquisitions",
     ))
 
-    # Factor 3: Status confidence (unverified_candidate = base, could be extended)
-    status_score = 0.5  # Base for unverified candidates
+    # Factor 3: Spectral Discrimination & Verification Confidence
+    spectral_class = props.get("spectral_class", "candidate_plastic_debris")
+    fdi_val = props.get("fdi_value", 0.04)
+    conf = props.get("confidence_score", 0.8)
+
+    # Dynamic spectral confidence reflecting FDI departure above baseline
+    fdi_norm = min(max(fdi_val / 0.075, 0.2), 1.0)
+    spectral_score = round((conf * 0.6) + (fdi_norm * 0.4), 3)
+
     if status == "verified":
-        status_score = 1.0
+        spectral_score = 1.0
     elif status == "rejected":
-        status_score = 0.0
+        spectral_score = 0.0
+
     factors.append(CleanupPriorityFactor(
-        name="verification_status",
-        value=status_score,
+        name="spectral_confidence",
+        value=spectral_score,
         weight=0.3,
-        description="Verification status from satellite analysis pipeline",
+        description=f"Spectral discrimination ({spectral_class.replace('_', ' ')}, FDI: {fdi_val:+.4f}) & validation",
     ))
 
     # Weighted composite score
     priority_score = (
         area_score * 0.4 +
         count_score * 0.3 +
-        status_score * 0.3
+        spectral_score * 0.3
     )
 
     explanation = (
-        f"Satellite-derived candidate hotspot (unverified). "
-        f"Area: {area_m2:.1f} m², Detection count: {count}. "
+        f"Satellite candidate hotspot (unverified: {spectral_class.replace('_', ' ')}). "
+        f"Area: {area_m2:.1f} m², Detection count: {count}, FDI: {fdi_val:+.4f}. "
         f"Score derived from: anomaly area (40%), detection persistence (30%), "
-        f"verification status (30%). NOT confirmed plastic pollution."
+        f"spectral confidence (30%). NOT confirmed plastic pollution."
     )
 
+    hotspot_id = props.get("id") or f"hotspot-{index + 1}"
+
     return CleanupPriorityItem(
-        id=f"hotspot-{props.get('candidate', 'unknown')}",
+        id=str(hotspot_id),
         source=DataSource.SATELLITE,
         latitude=centroid_lat,
         longitude=centroid_lon,
@@ -249,8 +255,8 @@ async def get_cleanup_priorities(
     # Compute priorities for all items
     all_priorities = []
 
-    for feat in hotspot_features:
-        priority = _compute_hotspot_priority(feat)
+    for i, feat in enumerate(hotspot_features):
+        priority = _compute_hotspot_priority(feat, index=i)
         all_priorities.append(priority)
 
     for report in reports:
