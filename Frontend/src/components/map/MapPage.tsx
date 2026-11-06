@@ -59,8 +59,9 @@ export const MapPage: React.FC<MapPageProps> = ({
         }),
         api.getHotspots({
           basin: b,
+          water_only: true,
           min_area: layerState.minHotspotArea,
-          min_confidence: layerState.minConfidence > 0 ? layerState.minConfidence : undefined,
+          min_confidence: (layerState.minConfidence && layerState.minConfidence > 0) ? layerState.minConfidence : undefined,
           spectral_class: layerState.spectralClass !== 'all' ? layerState.spectralClass : undefined,
           zone: layerState.zone !== 'all' ? layerState.zone : undefined,
           exclude_artifacts: layerState.excludeArtifacts ? true : undefined,
@@ -146,7 +147,6 @@ export const MapPage: React.FC<MapPageProps> = ({
             >
               <option value="jayakwadi" className="bg-[#030919] text-white">🌊 Jayakwadi (Godavari)</option>
               <option value="hussainsagar" className="bg-[#030919] text-white">🏙️ Hussain Sagar (Krishna)</option>
-              <option value="yamuna" className="bg-[#030919] text-white">🏞️ Yamuna Corridor (Ganges)</option>
             </select>
           </div>
 
@@ -175,7 +175,7 @@ export const MapPage: React.FC<MapPageProps> = ({
           layerState={layerState}
           onChangeLayerState={handleChangeLayerState}
           studyArea={studyArea}
-          totalHotspots={studyArea?.datasets.hotspots_count ?? 141}
+          totalHotspots={hotspots?.features.length ?? 0}
           filteredHotspotsCount={hotspots?.features.length ?? 0}
           onResetView={() => setResetCount((c) => c + 1)}
           isLoading={isLoading}

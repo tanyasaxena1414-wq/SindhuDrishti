@@ -5,7 +5,6 @@ import {
   Sliders, 
   Eye, 
   EyeOff, 
-  Filter, 
   MapPin, 
   RotateCcw,
   Sparkles,
@@ -20,15 +19,14 @@ export interface MapLayerState {
   waterMasks: boolean;
   waterAlgorithm?: 'mndwi' | 'ndwi' | 'awei';
   waterThreshold?: number;
-  showWaterDiagnostics?: boolean;
   hotspots: boolean;
   studyBoundary: boolean;
   gridOverlay: boolean;
-  minHotspotArea: number;
-  minConfidence: number;
+  minHotspotArea?: number;
+  minConfidence?: number;
   spectralClass: string;
-  zone: 'all' | 'open_water' | 'shoreline';
-  excludeArtifacts: boolean;
+  zone?: 'all' | 'open_water' | 'shoreline';
+  excludeArtifacts?: boolean;
   changeDetectionMode: boolean;
 }
 
@@ -315,97 +313,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
                     Hyacinth
                   </button>
                 </div>
-              </div>
-
-              {/* Reservoir Zone Filter */}
-              <div>
-                <span className="text-[10px] text-zinc-400 block mb-1 font-mono">
-                  Reservoir Spatial Zone
-                </span>
-                <div className="grid grid-cols-3 gap-1 p-1 bg-slate-950/70 border border-sky-950 rounded-lg text-[10px] font-mono">
-                  <button
-                    onClick={() => onChangeLayerState({ zone: 'all' })}
-                    className={`py-1 rounded cursor-pointer transition-colors ${
-                      layerState.zone === 'all'
-                        ? 'bg-sky-950 text-sky-300 border border-sky-800/60 font-bold'
-                        : 'text-zinc-400 hover:text-white'
-                    }`}
-                  >
-                    All Zones
-                  </button>
-                  <button
-                    onClick={() => onChangeLayerState({ zone: 'open_water' })}
-                    className={`py-1 rounded cursor-pointer transition-colors ${
-                      layerState.zone === 'open_water'
-                        ? 'bg-cyan-950 text-cyan-300 border border-cyan-800/60 font-bold'
-                        : 'text-zinc-400 hover:text-white'
-                    }`}
-                  >
-                    Open Water
-                  </button>
-                  <button
-                    onClick={() => onChangeLayerState({ zone: 'shoreline' })}
-                    className={`py-1 rounded cursor-pointer transition-colors ${
-                      layerState.zone === 'shoreline'
-                        ? 'bg-amber-950 text-amber-300 border border-amber-800/60 font-bold'
-                        : 'text-zinc-400 hover:text-white'
-                    }`}
-                  >
-                    Shoreline
-                  </button>
-                </div>
-              </div>
-
-              {/* Shoreline Edge Artifact Rejection Toggle */}
-              <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-950/40 border border-sky-950 text-[10px] font-mono">
-                <span className="text-zinc-400">Filter Boundary Noise (&lt;60m)</span>
-                <input
-                  type="checkbox"
-                  checked={layerState.excludeArtifacts}
-                  onChange={(e) => onChangeLayerState({ excludeArtifacts: e.target.checked })}
-                  className="accent-cyan-400 rounded cursor-pointer"
-                />
-              </div>
-
-              {/* Confidence Threshold Slider */}
-              <div>
-                <div className="flex items-center justify-between text-[10px] text-zinc-400 mb-1 font-mono">
-                  <span>Min Confidence (FDI/Persistence)</span>
-                  <span className="text-cyan-300 font-bold">
-                    {layerState.minConfidence > 0 ? `${Math.round(layerState.minConfidence * 100)}%` : '0% (All)'}
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0.0"
-                  max="0.80"
-                  step="0.05"
-                  value={layerState.minConfidence}
-                  onChange={(e) => onChangeLayerState({ minConfidence: parseFloat(e.target.value) })}
-                  className="w-full accent-cyan-400 bg-slate-900 h-1.5 rounded cursor-pointer"
-                />
-              </div>
-
-              {/* Min Area Slider */}
-              <div>
-                <div className="flex items-center justify-between text-[10px] text-zinc-400 mb-1 font-mono">
-                  <span className="flex items-center gap-1">
-                    <Filter className="w-3 h-3 text-cyan-400" />
-                    <span>Min Area Filter</span>
-                  </span>
-                  <span className="text-cyan-300 font-bold">
-                    {layerState.minHotspotArea > 0 ? `${layerState.minHotspotArea.toLocaleString()} m²` : 'All'}
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="50000"
-                  step="2500"
-                  value={layerState.minHotspotArea}
-                  onChange={(e) => onChangeLayerState({ minHotspotArea: parseFloat(e.target.value) })}
-                  className="w-full accent-cyan-400 bg-slate-900 h-1.5 rounded cursor-pointer"
-                />
               </div>
             </div>
           )}

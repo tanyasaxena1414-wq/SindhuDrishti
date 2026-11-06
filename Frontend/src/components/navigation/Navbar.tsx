@@ -78,8 +78,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <p className="text-[10px] font-mono text-zinc-400 hidden sm:block">
               {currentBasin === 'hussainsagar' 
                 ? 'Krishna Basin · Urban Lake Intelligence'
-                : currentBasin === 'yamuna'
-                ? 'Ganges Basin · Riverine Channel Monitoring'
                 : 'Godavari Basin · Debris Intelligence'}
             </p>
           </div>
@@ -125,7 +123,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <option value="jayakwadi" className="bg-[#030919] text-white">🌊 Jayakwadi (Godavari) • Active</option>
               <option value="hussainsagar" className="bg-[#030919] text-white">🏙️ Hussain Sagar (Krishna) • Urban</option>
-              <option value="yamuna" className="bg-[#030919] text-white">🏞️ Yamuna Corridor (Ganges) • Riverine</option>
             </select>
           </div>
 

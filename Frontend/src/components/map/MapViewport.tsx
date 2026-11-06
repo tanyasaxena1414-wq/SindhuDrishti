@@ -335,7 +335,7 @@ export const MapViewport: React.FC<MapViewportProps> = ({
     }
   }, [waterMasks, layerState.waterMasks, layerState.waterAlgorithm, layerState.waterThreshold, waterMaskAnalysis, studyArea]);
 
-  // 5. Update Candidate Hotspots Layer (Polygons & Pulsing Centroid Markers)
+  // 5. Update Candidate Hotspots Layer (Polygons & Pulsing Centroid Markers - Only Water Body Hotspots)
   useEffect(() => {
     const map = mapInstanceRef.current;
     const group = hotspotsGroupRef.current;
@@ -354,6 +354,8 @@ export const MapViewport: React.FC<MapViewportProps> = ({
 
     const filtered = rawFeatures.filter((feat) => {
       const p = feat.properties || {};
+      // Exclude any candidate hotspot outside actual water boundaries
+      if (p.is_within_water_body === false) return false;
       const areaMatch = (p.area_m2 || 0) >= minArea;
       const confMatch = (p.confidence_score !== undefined ? p.confidence_score : 1.0) >= minConf;
       const classMatch = spectralFilter === 'all' || p.spectral_class === spectralFilter;
@@ -475,7 +477,10 @@ export const MapViewport: React.FC<MapViewportProps> = ({
   const candidateCount = useMemo(() => {
     if (!hotspots?.features) return 0;
     const min = layerState.minHotspotArea || 0;
-    return hotspots.features.filter((f) => (f.properties?.area_m2 || 0) >= min).length;
+    return hotspots.features.filter((f) => {
+      if (f.properties?.is_within_water_body === false) return false;
+      return (f.properties?.area_m2 || 0) >= min;
+    }).length;
   }, [hotspots, layerState.minHotspotArea]);
 
   return (
@@ -616,7 +621,7 @@ export const MapViewport: React.FC<MapViewportProps> = ({
             </div>
             <div className="space-y-1.5 text-zinc-300 leading-snug">
               <p>• <b>Sensor:</b> ESA Sentinel-2 Level-2A MultiSpectral Instrument (MSI).</p>
-              <p>• <b>Water Masks:</b> Automated NDWI threshold extraction (Jayakwadi / Nath Sagar reservoir).</p>
+              <p>• <b>Water Masks:</b> Automated NDWI/MNDWI threshold extraction (Jayakwadi / Nath Sagar reservoir).</p>
               <p>• <b>Hotspots:</b> Spectral reflectance anomaly candidates. Unverified — not confirmed plastic pollution or ground-truth verified.</p>
               <p>• <b>Frequency:</b> Periodic satellite pass observations, not continuous real-time video.</p>
             </div>

@@ -114,10 +114,14 @@ export const api = {
     spectral_class?: string;
     zone?: string;
     exclude_artifacts?: boolean;
+    water_only?: boolean;
   }): Promise<GeoJSONFeatureCollection<HotspotProperties>> {
     const query = new URLSearchParams();
     if (params?.basin) {
       query.set('basin', params.basin);
+    }
+    if (params?.water_only) {
+      query.set('water_only', 'true');
     }
     if (params?.min_area !== undefined && params.min_area > 0) {
       query.set('min_area', params.min_area.toString());

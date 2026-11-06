@@ -1,8 +1,6 @@
 import React from 'react';
 import { 
   AlertTriangle, 
-  Target, 
-  ShieldCheck, 
   Compass, 
   Clock, 
   Activity, 
@@ -48,65 +46,6 @@ export const DriftSummary: React.FC<DriftSummaryProps> = ({ simulation }) => {
           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-800/50 text-cyan-300">
             {summary.particle_count} particles
           </span>
-        </div>
-      </div>
-
-      {/* Judge Executive Brief Card */}
-      <div className="p-4 rounded-xl bg-gradient-to-br from-[#04112e] to-[#02091c] border border-sky-800/60 shadow-lg space-y-3 font-mono">
-        <div className="flex items-center gap-2 text-cyan-300 font-bold text-xs tracking-wide border-b border-sky-900/60 pb-2">
-          <Target className="w-4 h-4 text-cyan-400" />
-          <span>JUDGE EXECUTIVE IMPACT BRIEF</span>
-        </div>
-
-        <div className="space-y-2 text-xs">
-          {summary.tracked_debris_name && (
-            <div className="pb-1">
-              <span className="text-cyan-400 text-[10px] block uppercase font-bold">Tracked Satellite Debris Item</span>
-              <span className="text-white font-bold text-sm block">
-                🎯 {summary.tracked_debris_name}
-              </span>
-            </div>
-          )}
-
-          <div>
-            <span className="text-zinc-400 text-[10px] block uppercase">Predicted Shoreline Destination</span>
-            <span className="text-sky-200 font-bold text-xs block">
-              {summary.destination_target || 'Jayakwadi Reservoir Shoreline / Basin'}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-sky-950 text-xs">
-            <div className="p-2 rounded-lg bg-[#030919] border border-sky-950">
-              <span className="text-zinc-500 text-[10px] block">HEADING</span>
-              <span className="text-cyan-300 font-bold block">
-                {summary.drift_heading_degrees ?? 0}° ({summary.drift_heading_cardinal ?? 'E'})
-              </span>
-            </div>
-            <div className="p-2 rounded-lg bg-[#030919] border border-sky-950">
-              <span className="text-zinc-500 text-[10px] block">INTERCEPTION</span>
-              <span className="text-amber-300 font-bold block">
-                ~{summary.estimated_shore_interception_hours ?? 6.0}h
-              </span>
-            </div>
-            <div className="p-2 rounded-lg bg-[#030919] border border-sky-950">
-              <span className="text-zinc-500 text-[10px] block">TOTAL DISTANCE</span>
-              <span className="text-white font-bold block">
-                {summary.total_drift_distance_km ?? 0} km
-              </span>
-            </div>
-          </div>
-
-          {summary.recommended_action && (
-            <div className="pt-2 border-t border-sky-950">
-              <span className="text-emerald-400 font-bold text-[10px] flex items-center gap-1.5 mb-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                RECOMMENDED CONTAINMENT ACTION:
-              </span>
-              <p className="text-[11px] text-zinc-300 font-sans leading-relaxed">
-                {summary.recommended_action}
-              </p>
-            </div>
-          )}
         </div>
       </div>
 

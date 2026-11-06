@@ -209,6 +209,7 @@ export const DriftPage: React.FC = () => {
         </div>
 
         <button
+          type="button"
           onClick={handleExecute}
           disabled={isLoading}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#030919] border border-sky-900/60 text-xs font-mono text-zinc-300 hover:text-white hover:border-cyan-400 transition-all cursor-pointer disabled:opacity-50"

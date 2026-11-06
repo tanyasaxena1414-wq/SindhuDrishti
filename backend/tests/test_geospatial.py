@@ -179,3 +179,15 @@ async def test_water_mask_analysis():
         assert data_hs["detected_surface_area_km2"] >= 5.0
 
 
+@pytest.mark.anyio
+async def test_hotspots_water_only():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        resp = await ac.get("/api/v1/hotspots?water_only=true")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data["features"]) > 0
+        for f in data["features"]:
+            assert f["properties"]["is_within_water_body"] is True
+
+
+

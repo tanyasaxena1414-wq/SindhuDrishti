@@ -86,5 +86,176 @@
   text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
 }
 
+/* Print Media Stylesheet for Drift Prediction & Dispatch Reports */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* When the drift modal is active, hide the main app root */
+  body.has-drift-modal #root,
+  body:has(#drift-modal-portal) #root {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Hide screen-only modal elements */
+  .no-print,
+  #drift-printable-report .no-print,
+  button {
+    display: none !important;
+  }
+
+  /* Reset modal overlay for print */
+  #drift-modal-portal,
+  .drift-modal-overlay {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    inset: auto !important;
+    z-index: auto !important;
+  }
+
+  /* The printable report container */
+  #drift-printable-report {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    max-height: none !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  #drift-printable-report * {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  /* Force light backgrounds and crisp dark typography */
+  #drift-printable-report div,
+  #drift-printable-report p,
+  #drift-printable-report span,
+  #drift-printable-report h1,
+  #drift-printable-report h2,
+  #drift-printable-report h3,
+  #drift-printable-report li,
+  #drift-printable-report td,
+  #drift-printable-report th {
+    color: #0f172a !important;
+  }
+
+  #drift-printable-report .print-text-dark {
+    color: #0f172a !important;
+  }
+
+  #drift-printable-report .print-text-muted {
+    color: #64748b !important;
+  }
+
+  #drift-printable-report .print-text-cyan {
+    color: #0284c7 !important;
+  }
+
+  #drift-printable-report .print-text-emerald {
+    color: #15803d !important;
+  }
+
+  #drift-printable-report .print-text-amber {
+    color: #b45309 !important;
+  }
+
+  #drift-printable-report .print-text-rose {
+    color: #b91c1c !important;
+  }
+
+  #drift-printable-report .print-card {
+    background: #f8fafc !important;
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    box-shadow: none !important;
+  }
+
+  #drift-printable-report .print-card-amber {
+    background: #fffbeb !important;
+    background-color: #fffbeb !important;
+    border: 1.5px solid #d97706 !important;
+    color: #0f172a !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  #drift-printable-report table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-bottom: 8px !important;
+  }
+
+  #drift-printable-report thead {
+    display: table-header-group !important;
+  }
+
+  #drift-printable-report tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  #drift-printable-report th {
+    background: #e2e8f0 !important;
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    font-weight: 700 !important;
+    padding: 6px 8px !important;
+  }
+
+  #drift-printable-report td {
+    border: 1px solid #cbd5e1 !important;
+    color: #1e293b !important;
+    padding: 6px 8px !important;
+  }
+
+  #drift-printable-report tr:nth-child(even) td {
+    background-color: #f8fafc !important;
+  }
+}
+
+
 
 

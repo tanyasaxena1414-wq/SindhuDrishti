@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Wind, 
   Waves, 
@@ -22,6 +23,7 @@ import {
   Truck,
   Anchor,
   Printer,
+  Download,
   FileText,
   X,
   Users
@@ -75,11 +77,22 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
   const [copiedHour, setCopiedHour] = useState<number | null>(null);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [showDispatchModal, setShowDispatchModal] = useState<boolean>(false);
+  const scheduleContainerRef = useRef<HTMLDivElement | null>(null);
   const activeWaypointRef = useRef<HTMLDivElement | null>(null);
 
+  // Keep viewport and window scroll perfectly stable during playback.
+  // Scroll strictly inside the local schedule container using container.scrollTop.
   useEffect(() => {
-    if (activeWaypointRef.current) {
-      activeWaypointRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const container = scheduleContainerRef.current;
+    const target = activeWaypointRef.current;
+    if (container && target) {
+      const containerRect = container.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      if (targetRect.top < containerRect.top) {
+        container.scrollTop -= (containerRect.top - targetRect.top + 8);
+      } else if (targetRect.bottom > containerRect.bottom) {
+        container.scrollTop += (targetRect.bottom - containerRect.bottom + 8);
+      }
     }
   }, [currentStepHour]);
 
@@ -178,8 +191,362 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
 
   const optimalWaypoint = schedule.find((w) => w.is_optimal) || schedule[schedule.length - 1];
 
+  useEffect(() => {
+    if (showDispatchModal) {
+      document.body.classList.add('has-drift-modal');
+    } else {
+      document.body.classList.remove('has-drift-modal');
+    }
+    return () => {
+      document.body.classList.remove('has-drift-modal');
+    };
+  }, [showDispatchModal]);
+
+  const generateReportHtml = () => {
+    if (!simulation?.summary) return null;
+    const sum = simulation.summary;
+    const orderId = sum.field_dispatch_order?.order_id || 'DSP-JYK-A49B2';
+    const timestamp = simulation.timestamp || new Date().toISOString();
+    const dest = sum.destination_target || 'Jayakwadi Reservoir Shoreline / Basin';
+    const etaHours = sum.estimated_shore_interception_hours ?? 3.0;
+    const etaWindow = `T+${etaHours.toFixed(1)}h to T+${(etaHours + 2.0).toFixed(1)}h`;
+    const risk = sum.risk_level || 'CRITICAL';
+    const massTons = sum.estimated_debris_mass_tons ?? 3.8;
+    const massKg = sum.estimated_debris_mass_kg ?? 3800;
+    const staging = sum.field_dispatch_order?.optimal_staging_area || 'Paithan North Jetty';
+    const damagePrevented = sum.economic_impact?.infrastructure_damage_prevented_lakhs ?? 14.8;
+    const roi = sum.economic_impact?.recovery_roi_multiplier ?? 8.4;
+    const skimmers = sum.field_assets?.skimmer_boats ?? 2;
+    const booms = sum.field_assets?.containment_booms_meters ?? 200;
+    const crew = sum.field_assets?.field_crew_count ?? 6;
+    const heading = `${sum.drift_heading_degrees ?? 0}° (${sum.drift_heading_cardinal ?? 'E'})`;
+    const speed = `${sum.average_drift_speed_kmh ?? 0} km/h`;
+    const dist = `${sum.total_drift_distance_km ?? 0} km`;
+    const action = sum.recommended_action || 'Deploy rapid containment deflection booms across prevailing drift vector to intercept floating debris before shoreline stranding.';
+    const tactics = sum.field_dispatch_order?.recommended_tactics || [
+      'Deploy floating deflection boom 40° across drift vector to funnel debris into extraction zone.',
+      `Stage recovery boat at optimal beaching waypoint before Hour ${Math.round(etaHours)}.`,
+      'Avoid shoreline vegetative entanglement in shallow littoral margins.'
+    ];
+
+    const waypointsRows = schedule.map((wp) => `
+      <tr style="${wp.is_optimal ? 'background-color: #fef3c7; font-weight: bold;' : ''}">
+        <td style="padding: 6px 10px; border: 1px solid #cbd5e1;">T+${wp.hour.toFixed(1)}h</td>
+        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-family: monospace;">${wp.latitude.toFixed(4)}°N, ${wp.longitude.toFixed(4)}°E</td>
+        <td style="padding: 6px 10px; border: 1px solid #cbd5e1;">${wp.status === 'ashore' ? '🛑 Shoreline / Beaching' : '🌊 Pelagic Water Drift'}</td>
+        <td style="padding: 6px 10px; border: 1px solid #cbd5e1;">${wp.action}</td>
+      </tr>
+    `).join('');
+
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SindhuDrishti Tactical Field Dispatch Order #${orderId}</title>
+  <style>
+    @page { 
+      size: A4 portrait; 
+      margin: 10mm 12mm; 
+    }
+    *, *:before, *:after {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.4;
+      color: #0f172a !important;
+      background: #ffffff !important;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+    .report-wrap {
+      width: 100%;
+      max-width: 100%;
+      background: #ffffff;
+      padding: 0;
+    }
+    .header {
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 4px;
+    }
+    .badge-cyan { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-amber { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-rose { background: #ffe4e6; color: #9f1239; border: 1px solid #fda4af; }
+    .section-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0369a1;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      padding-bottom: 3px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+    .kpi-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 6px 10px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .kpi-label { font-size: 9px; color: #64748b; text-transform: uppercase; font-weight: 700; }
+    .kpi-val { font-size: 13px; font-weight: 800; color: #0f172a; margin-top: 2px; }
+    .kpi-sub { font-size: 9px; color: #64748b; }
+    .amber-card {
+      background: #fffbeb !important;
+      border: 1.5px solid #d97706 !important;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 8px;
+      font-size: 10px;
+    }
+    thead {
+      display: table-header-group;
+    }
+    tr {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    th {
+      background: #e2e8f0 !important;
+      color: #0f172a !important;
+      text-align: left;
+      padding: 4px 6px;
+      font-weight: 700;
+      border: 1px solid #cbd5e1;
+    }
+    td { border: 1px solid #cbd5e1; color: #1e293b; padding: 4px 6px; }
+    ul { margin: 3px 0; padding-left: 18px; font-size: 10px; }
+    li { margin-bottom: 2px; color: #1e293b; }
+    .footer {
+      margin-top: 10px;
+      padding-top: 6px;
+      border-top: 1px solid #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #64748b;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  </style>
+</head>
+<body>
+  <div class="report-wrap">
+    <div class="header">
+      <div>
+        <span class="badge badge-cyan">SINDHUDRISHTI NGO RAPID RESPONSE DIRECTIVE</span>
+        <h1 style="font-size: 17px; font-weight: 800; margin: 4px 0 2px 0; color: #0f172a;">TACTICAL FIELD DISPATCH ORDER #${orderId}</h1>
+        <p style="font-size: 11px; color: #64748b; margin: 0;">Godavari Basin Authority • Paithan Dam Reservoir Recovery Desk</p>
+      </div>
+      <div style="text-align: right;">
+        <span class="badge ${risk === 'CRITICAL' ? 'badge-rose' : 'badge-amber'}">PRIORITY: ${risk}</span>
+        <div style="font-size: 10px; color: #64748b; margin-top: 4px; font-family: monospace;">Generated: ${timestamp}</div>
+      </div>
+    </div>
+
+    <!-- RECOMMENDED COLLECTION WINDOW -->
+    <div class="amber-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <span style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #92400e;">
+          ⭐ RECOMMENDED COLLECTION WINDOW
+        </span>
+        <span class="badge badge-amber">OPTIMAL INTERCEPTION WINDOW</span>
+      </div>
+      <div class="grid-3" style="margin-bottom: 6px;">
+        <div>
+          <span class="kpi-label">Destination Target</span>
+          <div style="font-size: 12px; font-weight: 700; color: #0f172a;">${dest}</div>
+        </div>
+        <div>
+          <span class="kpi-label">Recommended Time Window</span>
+          <div style="font-size: 12px; font-weight: 700; color: #b45309;">${etaWindow}</div>
+        </div>
+        <div>
+          <span class="kpi-label">Staging Base</span>
+          <div style="font-size: 12px; font-weight: 700; color: #0369a1;">${staging}</div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-bottom: 6px; font-size: 10px; color: #334155;">
+        <div><b>Drift Heading:</b> ${heading}</div>
+        <div><b>Average Velocity:</b> ${speed}</div>
+        <div><b>Drift Distance:</b> ${dist}</div>
+      </div>
+      <div style="font-size: 11px; color: #1e293b; border-top: 1px solid #fde68a; padding-top: 6px; margin-top: 4px;">
+        <b>Containment Directive:</b> ${action}
+      </div>
+    </div>
+
+    <!-- MISSION CRITICAL OVERVIEW -->
+    <div class="section-title">Mission Critical Overview</div>
+    <div class="grid-4">
+      <div class="kpi-card">
+        <span class="kpi-label">Priority Level</span>
+        <div class="kpi-val" style="color: #e11d48;">${risk}</div>
+        <span class="kpi-sub">Immediate Deployment</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Estimated Debris</span>
+        <div class="kpi-val" style="color: #d97706;">${massTons} Tons</div>
+        <span class="kpi-sub">~${massKg.toLocaleString()} kg macroplastics</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Damage Prevented</span>
+        <div class="kpi-val" style="color: #16a34a;">₹${damagePrevented} Lakhs</div>
+        <span class="kpi-sub">Turbine & canal protection</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Recovery Dividend</span>
+        <div class="kpi-val" style="color: #0284c7;">${roi}x ROI</div>
+        <span class="kpi-sub">Cost-to-benefit ratio</span>
+      </div>
+    </div>
+
+    <!-- REQUIRED FIELD EQUIPMENT MANIFEST -->
+    <div class="section-title">Required Operational Asset Manifest</div>
+    <div class="grid-3">
+      <div class="kpi-card">
+        <div style="font-size: 16px; margin-bottom: 2px;">🚤</div>
+        <div class="kpi-val">${skimmers} Catamarans</div>
+        <div class="kpi-sub">Trash Skimmer Retrieval Craft</div>
+      </div>
+      <div class="kpi-card">
+        <div style="font-size: 16px; margin-bottom: 2px;">⚓</div>
+        <div class="kpi-val">${booms}m Boom</div>
+        <div class="kpi-sub">Deflection & Containment Barrier</div>
+      </div>
+      <div class="kpi-card">
+        <div style="font-size: 16px; margin-bottom: 2px;">👷</div>
+        <div class="kpi-val">${crew} Personnel</div>
+        <div class="kpi-sub">Rapid Recovery Operators</div>
+      </div>
+    </div>
+
+    <!-- WAYPOINT INTERCEPTION TIMELINE -->
+    <div class="section-title">Hour-by-Hour Waypoint Interception Timeline</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Time (T+)</th>
+          <th>GPS Coordinates</th>
+          <th>Drift Status</th>
+          <th>Tactical Action / Directive</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${waypointsRows}
+      </tbody>
+    </table>
+
+    <!-- TACTICAL DIRECTIVES -->
+    <div class="section-title">Tactical Directives for Rapid Recovery Crew</div>
+    <ul>
+      ${tactics.map((t: string) => `<li>${t}</li>`).join('')}
+    </ul>
+
+    <!-- SIGN-OFF -->
+    <div class="footer">
+      <div>
+        <b>Authorization:</b> Field Operations Lead / NGO Dispatch Desk<br>
+        <b>Validation:</b> Verified against Copernicus Sentinel-2 Level-2A STAC Data
+      </div>
+      <div style="text-align: right;">
+        <b>Signature:</b> ___________________________<br>
+        <b>Date:</b> ${new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+    return { html: htmlContent, orderId };
+  };
+
+  const handleDownloadHtmlReport = () => {
+    const reportData = generateReportHtml();
+    if (!reportData) return;
+    const blob = new Blob([reportData.html], { type: 'text/html;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `SindhuDrishti_Drift_Report_${reportData.orderId}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handlePrintReport = () => {
+    const reportData = generateReportHtml();
+    if (!reportData) return;
+
+    // Create an invisible, rendered iframe to print this pristine document
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'fixed';
+    printFrame.style.left = '-9999px';
+    printFrame.style.top = '-9999px';
+    printFrame.style.width = '1000px';
+    printFrame.style.height = '1400px';
+    printFrame.style.border = '0';
+    printFrame.style.opacity = '0';
+    printFrame.style.pointerEvents = 'none';
+    document.body.appendChild(printFrame);
+
+    const frameDoc = printFrame.contentWindow?.document || printFrame.contentDocument;
+    if (frameDoc) {
+      frameDoc.open();
+      frameDoc.write(reportData.html);
+      frameDoc.close();
+      
+      // Allow the browser to parse HTML and layout styles before invoking print
+      setTimeout(() => {
+        try {
+          printFrame.contentWindow?.focus();
+          printFrame.contentWindow?.print();
+        } catch (e) {
+          console.error('Iframe print error, falling back to window.print():', e);
+          window.print();
+        } finally {
+          setTimeout(() => {
+            if (document.body.contains(printFrame)) {
+              document.body.removeChild(printFrame);
+            }
+          }, 60000);
+        }
+      }, 400);
+    }
+  };
+
   return (
-    <aside className="w-full lg:w-96 xl:w-104 shrink-0 bg-[#020614]/95 border border-sky-950/80 rounded-2xl flex flex-col overflow-hidden backdrop-blur-xl shadow-2xl select-none font-['DM_Sans',sans-serif]">
+    <>
+      <aside className="w-full lg:w-96 xl:w-104 shrink-0 bg-[#020614]/95 border border-sky-950/80 rounded-2xl flex flex-col overflow-hidden backdrop-blur-xl shadow-2xl select-none font-['DM_Sans',sans-serif]">
       {/* Header */}
       <div className="p-4 border-b border-sky-950/70 bg-[#03091c]/90 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
@@ -395,7 +762,7 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
             </span>
           </div>
 
-          <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+          <div ref={scheduleContainerRef} className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
             {schedule.map((wp, idx) => {
               const isSelected = Math.abs(currentStepHour - wp.hour) < 0.5;
               const isBeached = wp.status === 'ashore';
@@ -428,6 +795,7 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
                     </div>
 
                     <button
+                      type="button"
                       onClick={(e) => handleCopyGPS(e, wp.latitude, wp.longitude, wp.hour)}
                       className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-900 border border-sky-900/60 text-[9px] font-mono text-zinc-400 hover:text-cyan-300 hover:border-cyan-400 transition-colors cursor-pointer"
                       title="Copy GPS coordinates"
@@ -465,6 +833,7 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
         {/* 5. COLLAPSIBLE ADVANCED HYDRODYNAMIC OVERRIDES (Optional) */}
         <div className="border border-sky-950/80 rounded-xl overflow-hidden bg-[#030919]/50">
           <button
+            type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
             className="w-full p-2.5 flex items-center justify-between text-[10px] font-mono text-zinc-400 hover:text-white transition-colors cursor-pointer"
           >
@@ -546,6 +915,7 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
 
         {/* 6. RE-SIMULATE BUTTON */}
         <button
+          type="button"
           onClick={onExecute}
           disabled={isLoading}
           className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-sky-500 text-slate-950 font-bold text-xs hover:from-cyan-300 hover:to-sky-400 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg disabled:opacity-50"
@@ -554,138 +924,282 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
           <span>{isLoading ? 'Recalculating Dispatch Plan...' : 'Recalculate Interception Waypoints 📍'}</span>
         </button>
       </div>
+    </aside>
 
-      {/* 7. PRINTABLE NGO FIELD DISPATCH ORDER MODAL */}
-      {showDispatchModal && simulation?.summary && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-2xl bg-[#030919] border-2 border-cyan-500/60 rounded-2xl p-6 shadow-[0_0_50px_rgba(6,182,212,0.25)] space-y-4 text-white font-mono">
+    {/* 7. PRINTABLE NGO FIELD DISPATCH ORDER MODAL (PORTALED OUTSIDE ASIDE FOR FLAWLESS PRINT PREVIEW) */}
+    {showDispatchModal && simulation?.summary && createPortal(
+      <div 
+        id="drift-modal-portal"
+        className="drift-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in"
+      >
+          <div 
+            id="drift-printable-report"
+            className="w-full max-w-3xl max-h-[92vh] flex flex-col bg-[#030919] border-2 border-cyan-500/60 rounded-2xl shadow-[0_0_50px_rgba(6,182,212,0.25)] text-white font-mono overflow-hidden"
+          >
             {/* Modal Header */}
-            <div className="flex items-start justify-between border-b border-sky-800 pb-3">
+            <div className="p-4 sm:p-5 border-b border-sky-800 shrink-0 bg-[#020718] flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-xs text-cyan-400 font-bold uppercase tracking-widest">
+                  <span className="text-xs text-cyan-400 font-bold uppercase tracking-widest print-text-cyan">
                     SINDHUDRISHTI NGO RAPID RESPONSE DIRECTIVE
                   </span>
                 </div>
-                <h2 className="text-base font-bold text-white mt-1">
+                <h2 className="text-sm sm:text-base font-bold text-white mt-1 print-text-dark">
                   TACTICAL FIELD DISPATCH ORDER #{simulation.summary.field_dispatch_order?.order_id || 'DSP-JYK-A49B2'}
                 </h2>
-                <p className="text-[11px] text-zinc-400">
+                <p className="text-[11px] text-zinc-400 print-text-muted">
                   Godavari Basin Authority • Paithan Dam Reservoir Recovery Desk
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowDispatchModal(false)}
-                className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-sky-950 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-sky-950 transition-colors cursor-pointer no-print"
+                title="Close Modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Mission Critical Overview */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900">
-                <span className="text-[9px] text-zinc-500 block uppercase">Priority Level</span>
-                <span className="text-rose-400 font-bold text-sm block">
-                  {simulation.summary.risk_level || 'CRITICAL'}
-                </span>
-              </div>
-              <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900">
-                <span className="text-[9px] text-zinc-500 block uppercase">Estimated Debris</span>
-                <span className="text-amber-300 font-bold text-sm block">
-                  {simulation.summary.estimated_debris_mass_tons ?? 3.8} Tons
-                </span>
-              </div>
-              <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900">
-                <span className="text-[9px] text-zinc-500 block uppercase">Staging Base</span>
-                <span className="text-cyan-300 font-bold text-xs truncate block">
-                  {simulation.summary.field_dispatch_order?.optimal_staging_area || 'Paithan North Jetty'}
-                </span>
-              </div>
-              <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900">
-                <span className="text-[9px] text-zinc-500 block uppercase">Damage Prevented</span>
-                <span className="text-emerald-400 font-bold text-sm block">
-                  ₹{simulation.summary.economic_impact?.infrastructure_damage_prevented_lakhs ?? 14.8}L
-                </span>
-              </div>
-            </div>
+            {/* Scrollable Report Body */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 text-xs">
+              
+              {/* ⭐ RECOMMENDED COLLECTION WINDOW */}
+              <div className="p-4 rounded-xl bg-gradient-to-br from-amber-950/40 via-[#041a3d] to-[#020c24] border-2 border-amber-500/70 shadow-lg space-y-3 print-card-amber">
+                <div className="flex items-center justify-between border-b border-amber-500/40 pb-2">
+                  <div className="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase tracking-wider print-text-amber">
+                    <Target className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>RECOMMENDED COLLECTION WINDOW</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/50 text-[10px] font-bold">
+                    ETA: ~{(simulation.summary.estimated_shore_interception_hours ?? 3.0).toFixed(1)}h
+                  </span>
+                </div>
 
-            {/* Required Field Equipment Manifest */}
-            <div className="p-3.5 rounded-xl bg-[#010614] border border-sky-900 space-y-2">
-              <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">
-                Required Operational Asset Manifest:
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                <div className="flex items-center gap-2 p-2 rounded bg-[#030d24] border border-sky-950">
-                  <Truck className="w-4 h-4 text-cyan-400" />
-                  <div>
-                    <span className="text-white font-bold block">{simulation.summary.field_assets?.skimmer_boats ?? 2} Catamarans</span>
-                    <span className="text-[10px] text-zinc-400">Trash Skimmer Craft</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                  <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900/60 print-card">
+                    <span className="text-[9px] text-zinc-400 uppercase tracking-wide block print-text-muted">Destination Target</span>
+                    <span className="text-white font-bold text-xs mt-0.5 block print-text-dark">
+                      📍 {simulation.summary.destination_target || 'Jayakwadi Reservoir Shoreline / Basin'}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900/60 print-card">
+                    <span className="text-[9px] text-zinc-400 uppercase tracking-wide block print-text-muted">Interception Window</span>
+                    <span className="text-amber-300 font-bold text-xs mt-0.5 block print-text-amber">
+                      ⏱ T+{(simulation.summary.estimated_shore_interception_hours ?? 3.0).toFixed(1)}h to T+{((simulation.summary.estimated_shore_interception_hours ?? 3.0) + 2.0).toFixed(1)}h
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900/60 print-card">
+                    <span className="text-[9px] text-zinc-400 uppercase tracking-wide block print-text-muted">Staging Area</span>
+                    <span className="text-cyan-300 font-bold text-xs mt-0.5 truncate block print-text-cyan">
+                      ⚓ {simulation.summary.field_dispatch_order?.optimal_staging_area || 'Paithan North Jetty'}
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded bg-[#030d24] border border-sky-950">
-                  <Anchor className="w-4 h-4 text-amber-400" />
-                  <div>
-                    <span className="text-white font-bold block">{simulation.summary.field_assets?.containment_booms_meters ?? 200}m Boom</span>
-                    <span className="text-[10px] text-zinc-400">Deflection Barrier</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 p-2 rounded bg-[#030d24] border border-sky-950">
-                  <Users className="w-4 h-4 text-emerald-400" />
-                  <div>
-                    <span className="text-white font-bold block">{simulation.summary.field_assets?.field_crew_count ?? 6} Personnel</span>
-                    <span className="text-[10px] text-zinc-400">Recovery Operators</span>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* Tactical Deployment Directives */}
-            <div className="space-y-1.5 text-xs">
-              <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">
-                Tactical Directives for Rapid Recovery Crew:
-              </span>
-              <ul className="space-y-1 text-zinc-300 text-[11px] list-disc list-inside">
-                {simulation.summary.field_dispatch_order?.recommended_tactics?.map((tactic, tIdx) => (
-                  <li key={tIdx} className="leading-snug">{tactic}</li>
-                )) || (
-                  <>
-                    <li>Deploy floating deflection boom 40° across drift vector to funnel debris into extraction zone.</li>
-                    <li>Stage recovery boat at optimal beaching waypoint before Hour {simulation.summary.estimated_shore_interception_hours?.toFixed(0) || 3}.</li>
-                    <li>Avoid shoreline vegetative entanglement in shallow littoral margins.</li>
-                  </>
+                <div className="grid grid-cols-3 gap-2 pt-1 font-mono text-[10px] text-zinc-300 print-text-muted">
+                  <div>
+                    <span className="text-zinc-500 block">Drift Heading:</span>
+                    <span className="text-white font-bold print-text-dark">
+                      {simulation.summary.drift_heading_degrees ?? 0}° ({simulation.summary.drift_heading_cardinal ?? 'E'})
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-zinc-500 block">Average Velocity:</span>
+                    <span className="text-white font-bold print-text-dark">
+                      {simulation.summary.average_drift_speed_kmh ?? 0} km/h
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-zinc-500 block">Total Distance:</span>
+                    <span className="text-white font-bold print-text-dark">
+                      {simulation.summary.total_drift_distance_km ?? 0} km
+                    </span>
+                  </div>
+                </div>
+
+                {simulation.summary.recommended_action && (
+                  <div className="pt-2 border-t border-amber-500/30 text-[11px] text-zinc-200 print-text-dark">
+                    <span className="text-emerald-400 font-bold block mb-0.5 print-text-emerald">
+                      🛡️ Recommended Containment Directive:
+                    </span>
+                    <p className="leading-snug">
+                      {simulation.summary.recommended_action}
+                    </p>
+                  </div>
                 )}
-              </ul>
+              </div>
+
+              {/* Mission Critical Overview */}
+              <div>
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1.5 print-text-muted">
+                  Mission Critical Overview
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900 print-card">
+                    <span className="text-[9px] text-zinc-500 block uppercase print-text-muted">Priority Level</span>
+                    <span className="text-rose-400 font-bold text-sm block print-text-rose">
+                      {simulation.summary.risk_level || 'CRITICAL'}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900 print-card">
+                    <span className="text-[9px] text-zinc-500 block uppercase print-text-muted">Estimated Debris</span>
+                    <span className="text-amber-300 font-bold text-sm block print-text-amber">
+                      {simulation.summary.estimated_debris_mass_tons ?? 3.8} Tons
+                    </span>
+                    <span className="text-[9px] text-zinc-500 block print-text-muted">
+                      ~{(simulation.summary.estimated_debris_mass_kg ?? 3800).toLocaleString()} kg
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900 print-card">
+                    <span className="text-[9px] text-zinc-500 block uppercase print-text-muted">Damage Prevented</span>
+                    <span className="text-emerald-400 font-bold text-sm block print-text-emerald">
+                      ₹{simulation.summary.economic_impact?.infrastructure_damage_prevented_lakhs ?? 14.8}L
+                    </span>
+                    <span className="text-[9px] text-zinc-500 block print-text-muted">Turbine savings</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-[#010817] border border-sky-900 print-card">
+                    <span className="text-[9px] text-zinc-500 block uppercase print-text-muted">Recovery ROI</span>
+                    <span className="text-cyan-300 font-bold text-sm block print-text-cyan">
+                      {simulation.summary.economic_impact?.recovery_roi_multiplier ?? 8.4}x
+                    </span>
+                    <span className="text-[9px] text-zinc-500 block print-text-muted">Cleanup dividend</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Required Field Equipment Manifest */}
+              <div className="p-3.5 rounded-xl bg-[#010614] border border-sky-900 space-y-2 print-card">
+                <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block print-text-muted">
+                  Required Operational Asset Manifest:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                  <div className="flex items-center gap-2 p-2 rounded bg-[#030d24] border border-sky-950 print-card">
+                    <Truck className="w-4 h-4 text-cyan-400 print-text-cyan" />
+                    <div>
+                      <span className="text-white font-bold block print-text-dark">{simulation.summary.field_assets?.skimmer_boats ?? 2} Catamarans</span>
+                      <span className="text-[10px] text-zinc-400 print-text-muted">Trash Skimmer Craft</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded bg-[#030d24] border border-sky-950 print-card">
+                    <Anchor className="w-4 h-4 text-amber-400 print-text-amber" />
+                    <div>
+                      <span className="text-white font-bold block print-text-dark">{simulation.summary.field_assets?.containment_booms_meters ?? 200}m Boom</span>
+                      <span className="text-[10px] text-zinc-400 print-text-muted">Deflection Barrier</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 rounded bg-[#030d24] border border-sky-950 print-card">
+                    <Users className="w-4 h-4 text-emerald-400 print-text-emerald" />
+                    <div>
+                      <span className="text-white font-bold block print-text-dark">{simulation.summary.field_assets?.field_crew_count ?? 6} Personnel</span>
+                      <span className="text-[10px] text-zinc-400 print-text-muted">Recovery Operators</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Waypoint Interception Timeline Table */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block print-text-muted">
+                  Hour-by-Hour Interception Timeline:
+                </span>
+                <div className="overflow-x-auto rounded-lg border border-sky-900/60 print-card">
+                  <table className="w-full text-left text-[11px] font-mono border-collapse">
+                    <thead>
+                      <tr className="bg-[#020b1f] border-b border-sky-900 text-cyan-300">
+                        <th className="p-2">Time</th>
+                        <th className="p-2">Coordinates</th>
+                        <th className="p-2">Status</th>
+                        <th className="p-2">Tactical Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-sky-950/60 text-zinc-300">
+                      {schedule.map((wp, idx) => (
+                        <tr key={idx} className={wp.is_optimal ? 'bg-amber-950/30 text-amber-200' : ''}>
+                          <td className="p-2 font-bold">T+{wp.hour.toFixed(1)}h</td>
+                          <td className="p-2 font-mono">{wp.latitude.toFixed(4)}°N, {wp.longitude.toFixed(4)}°E</td>
+                          <td className="p-2">
+                            {wp.status === 'ashore' ? '🛑 Shoreline Beaching' : '🌊 Pelagic Drift'}
+                          </td>
+                          <td className="p-2">{wp.action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Tactical Deployment Directives */}
+              <div className="space-y-1.5 text-xs">
+                <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block print-text-muted">
+                  Tactical Directives for Rapid Recovery Crew:
+                </span>
+                <ul className="space-y-1 text-zinc-300 text-[11px] list-disc list-inside print-text-dark">
+                  {simulation.summary.field_dispatch_order?.recommended_tactics?.map((tactic, tIdx) => (
+                    <li key={tIdx} className="leading-snug">{tactic}</li>
+                  )) || (
+                    <>
+                      <li>Deploy floating deflection boom 40° across drift vector to funnel debris into extraction zone.</li>
+                      <li>Stage recovery boat at optimal beaching waypoint before Hour {(simulation.summary.estimated_shore_interception_hours ?? 3.0).toFixed(0)}.</li>
+                      <li>Avoid shoreline vegetative entanglement in shallow littoral margins.</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+
+              {/* Official Certification Footer */}
+              <div className="pt-3 border-t border-sky-900/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[10px] text-zinc-400 print-text-muted">
+                <div>
+                  <span className="block font-bold text-zinc-300 print-text-dark">Authority: Godavari Basin Management Division</span>
+                  <span>Sensor Verification: Sentinel-2 MSI Level-2A STAC Planetary Computer</span>
+                </div>
+                <div className="text-right">
+                  <span className="block">Status: Certified for Immediate Field Dispatch</span>
+                  <span className="font-mono text-zinc-500">Dispatch Order Hash: #{simulation.summary.field_dispatch_order?.order_id || 'DSP-JYK-A49B2'}</span>
+                </div>
+              </div>
+
             </div>
 
-            {/* Footer Actions */}
-            <div className="flex items-center justify-between pt-3 border-t border-sky-900 text-xs">
-              <span className="text-[10px] text-zinc-500">
-                Official SindhuDrishti Field Operations Manifest • 100% Free Public Sat Data
+            {/* Modal Footer Controls */}
+            <div className="p-4 border-t border-sky-800 shrink-0 bg-[#020718] flex flex-wrap items-center justify-between gap-2 no-print">
+              <span className="text-[10px] text-zinc-400 hidden sm:inline">
+                Formatted for Clean Single/Double Page PDF Export
               </span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => window.print()}
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-400 to-sky-500 text-slate-950 font-bold flex items-center gap-2 hover:from-cyan-300 cursor-pointer shadow-lg"
+                  onClick={handleDownloadHtmlReport}
+                  className="px-3.5 py-2 rounded-xl bg-cyan-950 border border-cyan-700/80 hover:bg-cyan-900/80 text-cyan-200 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-md"
+                  title="Download standalone HTML report"
+                >
+                  <Download className="w-4 h-4 text-cyan-400" />
+                  <span>Download HTML</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePrintReport}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 hover:from-amber-300 hover:to-amber-400 transition-colors cursor-pointer shadow-lg"
+                  title="Print or Save as PDF"
                 >
                   <Printer className="w-4 h-4" />
-                  <span>Print Mission Brief</span>
+                  <span>Print / Save PDF</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowDispatchModal(false)}
-                  className="px-3 py-2 rounded-xl bg-slate-900 border border-sky-800 text-zinc-300 hover:text-white cursor-pointer"
+                  className="px-3 py-2 rounded-xl bg-slate-900 border border-sky-800 text-zinc-300 hover:text-white transition-colors cursor-pointer text-xs"
                 >
                   Close
                 </button>
               </div>
             </div>
+
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-    </aside>
+    </>
   );
 };

@@ -6,8 +6,6 @@ import {
   RotateCcw, 
   Clock, 
   Activity, 
-  Target, 
-  ShieldCheck, 
   ZoomIn, 
   ZoomOut,
   Navigation,
@@ -382,75 +380,6 @@ export const DriftCanvas: React.FC<DriftCanvasProps> = ({
           </div>
         </div>
 
-        {/* Floating Judge Intelligence HUD (Top-Right) */}
-        {summary && (
-          <div className="absolute top-4 right-4 z-10 max-w-sm bg-[#030919]/95 border border-sky-800/80 rounded-xl p-3.5 backdrop-blur-xl shadow-2xl font-mono space-y-2.5 pointer-events-auto">
-            <div className="flex items-center justify-between border-b border-sky-950 pb-2">
-              <div className="flex items-center gap-1.5 text-cyan-300 font-bold text-xs">
-                <Target className="w-4 h-4 text-cyan-400" />
-                <span>JUDGE IMPACT BRIEF</span>
-              </div>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                summary.risk_level === 'CRITICAL' ? 'bg-rose-950 text-rose-300 border border-rose-800' :
-                summary.risk_level === 'HIGH' ? 'bg-amber-950 text-amber-300 border border-amber-800' :
-                'bg-cyan-950 text-cyan-300 border border-cyan-800'
-              }`}>
-                {summary.risk_level || 'EVALUATED'}
-              </span>
-            </div>
-
-            <div className="space-y-1.5 text-[11px]">
-              <div>
-                <span className="text-zinc-400 text-[10px] block">TARGET DESTINATION</span>
-                <span className="text-white font-bold leading-tight block">
-                  {summary.destination_target || 'Jayakwadi Reservoir Shoreline'}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-sky-950/60">
-                <div>
-                  <span className="text-zinc-500 text-[10px] block">DRIFT HEADING</span>
-                  <span className="text-cyan-300 font-bold">
-                    {summary.drift_heading_degrees ?? 0}° ({summary.drift_heading_cardinal ?? 'E'})
-                  </span>
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[10px] block">SHORE INTERCEPTION</span>
-                  <span className="text-amber-300 font-bold">
-                    ~{summary.estimated_shore_interception_hours ?? 3.0}h to Shore
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-sky-950/60">
-                <div>
-                  <span className="text-zinc-500 text-[10px] block">STATUS</span>
-                  <span className="text-white font-bold">
-                    {summary.beached_at_end && summary.beached_at_end > 0 ? 'Beached on Shore' : 'Active in Water'}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-zinc-500 text-[10px] block">SPEED</span>
-                  <span className="text-white font-bold">
-                    {summary.average_drift_speed_kmh ?? 0} km/h
-                  </span>
-                </div>
-              </div>
-
-              {summary.recommended_action && (
-                <div className="pt-2 border-t border-sky-950/80">
-                  <span className="text-emerald-400 font-bold text-[10px] block mb-0.5 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5" /> CONTAINMENT ACTION:
-                  </span>
-                  <p className="text-[10px] text-zinc-300 leading-snug">
-                    {summary.recommended_action}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Map Controls (Top-Left) */}
         <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
           <button
@@ -488,6 +417,7 @@ export const DriftCanvas: React.FC<DriftCanvasProps> = ({
       <div className="p-3.5 px-6 bg-[#03091c]/95 border-t border-sky-950/80 flex items-center justify-between gap-4 z-10">
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={onTogglePlay}
             disabled={!simulation || maxSteps <= 1}
             className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-400 to-sky-500 text-slate-950 font-bold text-xs hover:from-cyan-300 transition-all cursor-pointer disabled:opacity-40 flex items-center gap-1.5 shadow-lg"
@@ -495,17 +425,18 @@ export const DriftCanvas: React.FC<DriftCanvasProps> = ({
             {isPlaying ? (
               <>
                 <Pause className="w-3.5 h-3.5 fill-slate-950" />
-                <span>Pause</span>
+                <span>Pause Flow</span>
               </>
             ) : (
               <>
                 <Play className="w-3.5 h-3.5 fill-slate-950" />
-                <span>Play Flow</span>
+                <span>Start Flow</span>
               </>
             )}
           </button>
 
           <button
+            type="button"
             onClick={onResetPlay}
             disabled={!simulation}
             className="p-2 rounded-xl bg-[#030919] border border-sky-950 text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-40"

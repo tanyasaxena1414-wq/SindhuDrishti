@@ -223,6 +223,7 @@ class STACSatelliteService:
                     "source": f"STAC Live Provider: {latest_pass.platform} ({latest_pass.id})",
                     "status": "unverified_candidate",
                     "zone_type": "pelagic_open_water",
+                    "is_within_water_body": True,
                     "is_shoreline_edge_artifact": False,
                     "distance_to_shore_m": dist_m,
                     "spectral_class": "candidate_plastic_debris",
@@ -275,14 +276,16 @@ class STACSatelliteService:
             p_area = round(b_area * (0.6 + (i % 9) * 0.1), 1)
             p_count = int(b_count * (0.7 + (i % 7) * 0.12))
 
-            # Shapely distance check
+            # Shapely distance and containment check
             dist_to_shore_m = 80.0
             is_edge_artifact = False
+            is_in_water = True
             zone_type = "shoreline_littoral"
 
             if water_geom is not None:
                 try:
                     pt = Point(p_lon, p_lat)
+                    is_in_water = bool(water_geom.intersects(pt) or water_geom.contains(pt))
                     dist_to_shore_m = round(float(water_geom.boundary.distance(pt) * 111000.0), 1)
                     if dist_to_shore_m < 60.0:
                         is_edge_artifact = True
@@ -293,6 +296,7 @@ class STACSatelliteService:
                         zone_type = "shoreline_littoral"
                 except Exception:
                     dist_to_shore_m = 80.0
+                    is_in_water = True
 
             # MARIDA classification simulation
             seed = (i * 37 + int(p_area) % 1000) % 100
@@ -350,6 +354,7 @@ class STACSatelliteService:
                     "source": f"STAC Live Provider: {latest_pass.platform} ({latest_pass.id})",
                     "status": "unverified_candidate",
                     "zone_type": zone_type,
+                    "is_within_water_body": is_in_water,
                     "is_shoreline_edge_artifact": is_edge_artifact,
                     "distance_to_shore_m": dist_to_shore_m,
                     "spectral_class": spec_class,

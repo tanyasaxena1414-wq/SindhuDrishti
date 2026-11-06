@@ -84,6 +84,7 @@ export interface HotspotProperties {
   marida_rationale?: string;
   marida_probabilities?: Record<string, number>;
   zone_type?: 'pelagic_open_water' | 'shoreline_littoral' | string;
+  is_within_water_body?: boolean;
   distance_to_shore_m?: number;
   is_shoreline_edge_artifact?: boolean;
   edge_artifact_warning?: string;

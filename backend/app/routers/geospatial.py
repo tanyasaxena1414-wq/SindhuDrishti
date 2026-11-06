@@ -49,7 +49,8 @@ async def get_hotspots(
     min_confidence: Optional[float] = Query(None, ge=0.0, le=1.0, description="Minimum confidence score (0.0 to 1.0)"),
     spectral_class: Optional[str] = Query(None, description="Filter by spectral class (e.g. candidate_plastic_debris, dense_vegetation_hyacinth)"),
     zone: Optional[str] = Query(None, description="Filter by zone: all, open_water, or shoreline"),
-    exclude_artifacts: Optional[bool] = Query(False, description="Exclude shoreline mixed-pixel boundary artifacts (<60m)")
+    exclude_artifacts: Optional[bool] = Query(False, description="Exclude shoreline mixed-pixel boundary artifacts (<60m)"),
+    water_only: Optional[bool] = Query(False, description="Filter only candidate debris hotspots within water boundaries")
 ):
     hotspots = geojson_store.get_hotspots(basin=basin)
     features = hotspots.get("features", [])
@@ -95,6 +96,10 @@ async def get_hotspots(
 
         # Apply exclude_artifacts filter
         if exclude_artifacts and props.get("is_shoreline_edge_artifact", False):
+            continue
+
+        # Apply water_only filter (only display hotspots within actual water boundaries)
+        if water_only and not props.get("is_within_water_body", True):
             continue
 
         filtered_features.append(feat)

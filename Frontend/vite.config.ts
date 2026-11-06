@@ -19,6 +19,14 @@ export default defineConfig(() => {
           target: process.env.VITE_API_URL || 'http://127.0.0.1:8000',
           changeOrigin: true,
         },
+        '/docs': {
+          target: process.env.VITE_API_URL || 'http://127.0.0.1:8000',
+          changeOrigin: true,
+        },
+        '/openapi.json': {
+          target: process.env.VITE_API_URL || 'http://127.0.0.1:8000',
+          changeOrigin: true,
+        },
       },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modify—file watching is disabled to prevent flickering during agent edits.
