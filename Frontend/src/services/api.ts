@@ -59,7 +59,18 @@ async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promis
     try {
       const errJson = await response.json();
       if (errJson && errJson.detail) {
-        errorDetail = typeof errJson.detail === 'string' ? errJson.detail : JSON.stringify(errJson.detail);
+        if (typeof errJson.detail === 'string') {
+          errorDetail = errJson.detail;
+        } else if (Array.isArray(errJson.detail)) {
+          errorDetail = errJson.detail
+            .map((e: any) => {
+              const field = Array.isArray(e.loc) ? e.loc[e.loc.length - 1] : 'Field';
+              return `${field}: ${e.msg || 'Invalid value'}`;
+            })
+            .join(' | ');
+        } else {
+          errorDetail = JSON.stringify(errJson.detail);
+        }
       }
     } catch {
       // Body not JSON
@@ -241,6 +252,35 @@ export const api = {
         'X-Reviewer-API-Key': reviewerApiKey.trim(),
       },
       body: JSON.stringify(update),
+    });
+  },
+
+  // 11b. Delete Report by ID
+  async deleteReport(
+    reportId: string,
+    reviewerApiKey?: string
+  ): Promise<{ message: string; report_id: string }> {
+    const headers: Record<string, string> = {};
+    if (reviewerApiKey) {
+      headers['X-Reviewer-API-Key'] = reviewerApiKey.trim();
+    }
+    return fetchJson<{ message: string; report_id: string }>(`/reports/${encodeURIComponent(reportId)}`, {
+      method: 'DELETE',
+      headers,
+    });
+  },
+
+  // 11c. Clear All Reports (Bulk cleanup)
+  async clearAllReports(
+    reviewerApiKey?: string
+  ): Promise<{ message: string }> {
+    const headers: Record<string, string> = {};
+    if (reviewerApiKey) {
+      headers['X-Reviewer-API-Key'] = reviewerApiKey.trim();
+    }
+    return fetchJson<{ message: string }>(`/reports`, {
+      method: 'DELETE',
+      headers,
     });
   },
 

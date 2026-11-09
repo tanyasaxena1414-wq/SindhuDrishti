@@ -15,7 +15,7 @@ class ReportCreate(BaseModel):
     latitude: str = Field(..., description="Latitude as string (e.g., '19.4567')")
     longitude: str = Field(..., description="Longitude as string (e.g., '75.3456')")
     description: str = Field(..., min_length=10, max_length=2000, description="Description of the pollution incident")
-    photo_reference: Optional[str] = Field(None, max_length=255, description="Optional photo reference/URL")
+    photo_reference: Optional[str] = Field(None, max_length=5_000_000, description="Optional photo reference/URL or base64 data URI")
 
     @field_validator("latitude")
     @classmethod

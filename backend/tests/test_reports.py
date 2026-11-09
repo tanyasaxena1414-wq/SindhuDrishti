@@ -498,3 +498,70 @@ async def test_invalid_status_transitions_batch(client, reviewer_headers):
             headers=reviewer_headers,
         )
         assert response.status_code == 400, f"Expected 400 for {current_status.value} -> {new_status}"
+
+
+@pytest.mark.anyio
+async def test_create_report_with_base64_photo(client):
+    """Test report creation with a large base64 image data string."""
+    large_base64 = "data:image/jpeg;base64," + "A" * 15000
+    response = await client.post(
+        "/api/v1/reports",
+        json={
+            "latitude": "19.4567",
+            "longitude": "75.3456",
+            "description": "User uploaded camera picture of debris windrow",
+            "photo_reference": large_base64,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["photo_reference"] == large_base64
+
+
+@pytest.mark.anyio
+async def test_delete_report_success(client):
+    """Test deleting a report by ID."""
+    # Create report first
+    create_res = await client.post(
+        "/api/v1/reports",
+        json={
+            "latitude": "19.4567",
+            "longitude": "75.3456",
+            "description": "Report to be deleted test",
+        },
+    )
+    assert create_res.status_code == 201
+    report_id = create_res.json()["report_id"]
+
+    # Delete report
+    delete_res = await client.delete(f"/api/v1/reports/{report_id}")
+    assert delete_res.status_code == 200
+    assert delete_res.json()["report_id"] == report_id
+
+    # Verify report is gone
+    get_res = await client.get(f"/api/v1/reports/{report_id}")
+    assert get_res.status_code == 404
+
+
+@pytest.mark.anyio
+async def test_clear_all_reports(client):
+    """Test clearing all reports."""
+    # Create two reports
+    for i in range(2):
+        await client.post(
+            "/api/v1/reports",
+            json={
+                "latitude": "19.4567",
+                "longitude": "75.3456",
+                "description": f"Bulk cleanup report {i} test",
+            },
+        )
+
+    # Clear all
+    clear_res = await client.delete("/api/v1/reports")
+    assert clear_res.status_code == 200
+
+    # Verify list is empty
+    list_res = await client.get("/api/v1/reports")
+    assert list_res.status_code == 200
+    assert list_res.json()["total"] == 0

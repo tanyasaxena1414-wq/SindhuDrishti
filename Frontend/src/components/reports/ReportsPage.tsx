@@ -95,6 +95,18 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({
     await fetchReports();
   };
 
+  const handleDeleteReport = async (reportId: string) => {
+    await api.deleteReport(reportId, reviewerKey);
+    setSelectedReport(null);
+    await fetchReports();
+  };
+
+  const handleClearAllReports = async () => {
+    await api.clearAllReports(reviewerKey);
+    setSelectedReport(null);
+    await fetchReports();
+  };
+
   return (
     <div className="flex-1 w-full max-w-[1720px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 font-sans">
       {/* Workspace Header */}
@@ -285,6 +297,8 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({
           reviewerKey={reviewerKey}
           onChangeReviewerKey={setReviewerKey}
           onUpdateStatus={handleUpdateReportStatus}
+          onDeleteReport={handleDeleteReport}
+          onClearAllReports={handleClearAllReports}
           onOpenReportModal={handleOpenModal}
           stats={stats}
         />

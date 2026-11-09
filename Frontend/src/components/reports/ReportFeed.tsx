@@ -16,7 +16,8 @@ import {
   Radio, 
   Image as ImageIcon, 
   KeyRound, 
-  PlusCircle 
+  PlusCircle,
+  Trash2
 } from 'lucide-react';
 import { ReportResponse, ReportStatus, DashboardStats } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
@@ -36,6 +37,8 @@ interface ReportFeedProps {
   reviewerKey: string;
   onChangeReviewerKey?: (key: string) => void;
   onUpdateStatus?: (reportId: string, status: ReportStatus, notes?: string) => Promise<void>;
+  onDeleteReport?: (reportId: string) => Promise<void>;
+  onClearAllReports?: () => Promise<void>;
   onOpenReportModal?: () => void;
   stats?: DashboardStats | null;
 }
@@ -55,6 +58,8 @@ export const ReportFeed: React.FC<ReportFeedProps> = ({
   reviewerKey,
   onChangeReviewerKey,
   onUpdateStatus,
+  onDeleteReport,
+  onClearAllReports,
   onOpenReportModal,
   stats,
 }) => {
@@ -115,6 +120,40 @@ export const ReportFeed: React.FC<ReportFeedProps> = ({
       setActionFeedback({ type: 'error', message: err.message || 'Status transition failed.' });
     } finally {
       setIsUpdatingStatus(false);
+    }
+  };
+
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  const handleDelete = async (reportId: string) => {
+    if (!onDeleteReport) return;
+    if (!window.confirm(`Are you sure you want to delete incident report #${reportId.slice(0, 8)}? This cannot be undone.`)) {
+      return;
+    }
+    setIsDeleting(true);
+    try {
+      await onDeleteReport(reportId);
+      setActionFeedback({ type: 'success', message: 'Report deleted successfully.' });
+    } catch (err: any) {
+      setActionFeedback({ type: 'error', message: err.message || 'Failed to delete report.' });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleClearAll = async () => {
+    if (!onClearAllReports) return;
+    if (!window.confirm('Are you sure you want to delete ALL pollution reports? This cannot be undone.')) {
+      return;
+    }
+    setIsDeleting(true);
+    try {
+      await onClearAllReports();
+      setActionFeedback({ type: 'success', message: 'All reports deleted successfully.' });
+    } catch (err: any) {
+      setActionFeedback({ type: 'error', message: err.message || 'Failed to clear reports.' });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -214,6 +253,20 @@ export const ReportFeed: React.FC<ReportFeedProps> = ({
             <ImageIcon className="w-3 h-3" />
             <span>With Photo</span>
           </button>
+
+          {/* Quick Action: Clear All Reports */}
+          {reports.length > 0 && onClearAllReports && (
+            <button
+              type="button"
+              onClick={handleClearAll}
+              disabled={isDeleting}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-rose-500/30 text-[11px] font-mono text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer disabled:opacity-50"
+              title="Delete all incident reports in database"
+            >
+              <Trash2 className="w-3 h-3 text-rose-400" />
+              <span>Clear All</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -327,6 +380,21 @@ export const ReportFeed: React.FC<ReportFeedProps> = ({
                           <Copy className="w-3 h-3" />
                         )}
                       </button>
+
+                      {onDeleteReport && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(report.report_id);
+                          }}
+                          disabled={isDeleting}
+                          className="p-1 rounded text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                          title="Delete Report"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
                     </div>
 
                     <span className="text-[10px] font-mono text-zinc-400 flex items-center gap-1 whitespace-nowrap">
@@ -470,17 +538,32 @@ export const ReportFeed: React.FC<ReportFeedProps> = ({
                   </div>
                 </div>
 
-                <span 
-                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${
-                    selectedReport.status === 'verified'
-                      ? isDark ? 'bg-emerald-950 text-emerald-300 border-emerald-700' : 'bg-emerald-50 text-emerald-700 border-emerald-300 shadow-xs'
-                      : selectedReport.status === 'rejected'
-                      ? isDark ? 'bg-rose-950 text-rose-300 border-rose-700' : 'bg-rose-50 text-rose-700 border-rose-300 shadow-xs'
-                      : isDark ? 'bg-amber-950 text-amber-300 border-amber-700' : 'bg-amber-50 text-amber-700 border-amber-300 shadow-xs'
-                  }`}
-                >
-                  {selectedReport.status}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span 
+                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${
+                      selectedReport.status === 'verified'
+                        ? isDark ? 'bg-emerald-950 text-emerald-300 border-emerald-700' : 'bg-emerald-50 text-emerald-700 border-emerald-300 shadow-xs'
+                        : selectedReport.status === 'rejected'
+                        ? isDark ? 'bg-rose-950 text-rose-300 border-rose-700' : 'bg-rose-50 text-rose-700 border-rose-300 shadow-xs'
+                        : isDark ? 'bg-amber-950 text-amber-300 border-amber-700' : 'bg-amber-50 text-amber-700 border-amber-300 shadow-xs'
+                    }`}
+                  >
+                    {selectedReport.status}
+                  </span>
+
+                  {onDeleteReport && (
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(selectedReport.report_id)}
+                      disabled={isDeleting}
+                      className="px-2 py-0.5 rounded-lg border border-rose-500/40 text-rose-400 hover:bg-rose-500/20 text-[10px] flex items-center gap-1 transition-all cursor-pointer disabled:opacity-50"
+                      title="Delete this incident report"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>Delete</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Photo Evidence */}

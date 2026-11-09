@@ -10,6 +10,47 @@ interface ReportFormModalProps {
   onReportSubmitted: () => void;
 }
 
+const compressImage = (file: File, maxWidth = 1200, maxHeight = 1200, quality = 0.75): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const img = new window.Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(readerEvent.target?.result as string);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => reject(new Error('Failed to load image for processing'));
+      img.src = readerEvent.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.readAsDataURL(file);
+  });
+};
+
 export const ReportFormModal: React.FC<ReportFormModalProps> = ({
   isOpen,
   onClose,
@@ -29,20 +70,21 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      setErrorMsg('Image size must be less than 5MB.');
+    if (file.size > 15 * 1024 * 1024) {
+      setErrorMsg('Image size must be less than 15MB.');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData((prev) => ({ ...prev, photo_reference: reader.result as string }));
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImage(file);
+      setFormData((prev) => ({ ...prev, photo_reference: compressed }));
+    } catch {
+      setErrorMsg('Could not process selected image.');
+    }
   };
 
   const handleUseSamplePhoto = () => {
@@ -113,9 +155,9 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
         </div>
 
         {errorMsg && (
-          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-500 flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{errorMsg}</span>
+          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-500 flex items-start gap-2 max-h-32 overflow-y-auto">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span className="break-words leading-relaxed">{errorMsg}</span>
           </div>
         )}
 

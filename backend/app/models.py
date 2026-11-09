@@ -19,7 +19,7 @@ class PollutionReport(Base):
     latitude = Column(String(50), nullable=False)  # Store as string to preserve precision
     longitude = Column(String(50), nullable=False)
     description = Column(Text, nullable=False)
-    photo_reference = Column(String(255), nullable=True)
+    photo_reference = Column(Text, nullable=True)
     status = Column(SQLEnum(ReportStatus), default=ReportStatus.PENDING, nullable=False)
     reviewer_notes = Column(Text, nullable=True)
     submitted_at = Column(DateTime, default=datetime.utcnow, nullable=False)

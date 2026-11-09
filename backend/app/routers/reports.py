@@ -185,6 +185,50 @@ async def update_report_status(
     return report.to_dict(include_reviewer_notes=True)
 
 
+@router.delete(
+    "/{report_id}",
+    status_code=status.HTTP_200_OK,
+    responses={
+        404: {"model": ErrorResponse, "description": "Report not found"},
+    },
+    summary="Delete a specific pollution report by ID",
+)
+async def delete_report(
+    report_id: str,
+    db: AsyncSession = Depends(get_db),
+    reviewer: Optional[dict] = Depends(optional_current_reviewer),
+):
+    """Delete a pollution report by ID."""
+    result = await db.execute(
+        select(PollutionReport).where(PollutionReport.report_id == report_id)
+    )
+    report = result.scalar_one_or_none()
+
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    await db.delete(report)
+    await db.commit()
+
+    return {"message": "Report deleted successfully", "report_id": report_id}
+
+
+@router.delete(
+    "",
+    status_code=status.HTTP_200_OK,
+    summary="Delete all pollution reports",
+)
+async def clear_all_reports(
+    db: AsyncSession = Depends(get_db),
+    reviewer: Optional[dict] = Depends(optional_current_reviewer),
+):
+    """Delete all pollution reports (bulk clear for testing/cleanup)."""
+    from sqlalchemy import delete as sql_delete
+    await db.execute(sql_delete(PollutionReport))
+    await db.commit()
+    return {"message": "All reports deleted successfully"}
+
+
 def _is_valid_transition(current: ReportStatus, new: ReportStatus) -> bool:
     """Validate allowed status transitions."""
     # From pending, can go to verified or rejected
