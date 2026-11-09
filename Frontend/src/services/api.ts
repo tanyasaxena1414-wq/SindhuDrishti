@@ -159,12 +159,26 @@ export const api = {
     return fetchJson<CleanupPriorityResponse>(`/dashboard/cleanup/priorities?${query.toString()}`);
   },
 
-  // 7. Kinematic Drift Simulation
+  // 7. Hydrodynamic Drift Simulation
   async simulateDrift(request: DriftSimulateRequest): Promise<DriftSimulateResponse> {
     return fetchJson<DriftSimulateResponse>('/drift/simulate', {
       method: 'POST',
       body: JSON.stringify(request),
     });
+  },
+
+  // 7b. Export Drift Trajectory as standard GPX 1.1 file
+  async exportDriftGpx(request: DriftSimulateRequest): Promise<Blob> {
+    const url = `${BASE_URL}/drift/export/gpx`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+    if (!res.ok) {
+      throw new Error(`GPX Export failed: ${res.statusText}`);
+    }
+    return res.blob();
   },
 
   // 8. Submit Citizen Pollution Report

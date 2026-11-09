@@ -7,12 +7,15 @@ import {
   PlusCircle, 
   Menu, 
   X, 
-  Satellite,
   Waves,
-  RefreshCw
+  Sun,
+  Moon,
+  ArrowRight,
+  Globe2
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { HealthResponse, NavigationTab, BasinId } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 
 interface NavbarProps {
   currentTab: NavigationTab;
@@ -29,6 +32,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentBasin = 'jayakwadi',
   onSelectBasin,
 }) => {
+  const { theme, toggleTheme, isDark } = useTheme();
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -47,6 +51,19 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => clearInterval(interval);
   }, []);
 
+  const handleLandingScroll = (sectionId: string) => {
+    if (currentTab !== 'landing') {
+      onSelectTab('landing');
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 150);
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const navItems: { tab: NavigationTab; label: string; icon: React.FC<{ className?: string }> }[] = [
     { tab: 'explore-map', label: 'Explore Map', icon: Compass },
     { tab: 'dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -55,131 +72,235 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#020512]/90 border-b border-sky-950/70 backdrop-blur-xl select-none">
+    <header
+      className={`sticky top-0 z-50 w-full backdrop-blur-xl border-b transition-colors duration-200 select-none ${
+        isDark
+          ? 'bg-[#020817]/90 border-[#0e2a47]/70 text-[#f8fafc]'
+          : 'bg-white/95 border-[#d0dde9] text-[#06152b] shadow-xs'
+      }`}
+    >
       <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
         {/* Brand Logo */}
         <button 
           onClick={() => onSelectTab('landing')}
-          className="flex items-center gap-3 cursor-pointer group text-left"
+          className="flex items-center gap-2.5 cursor-pointer group text-left"
+          title="SindhuDrishti Home"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/30 border border-sky-400/40 flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.25)] group-hover:border-sky-400 transition-colors">
-            <Waves className="w-5 h-5 text-cyan-300 group-hover:scale-105 transition-transform" />
+          {/* Moodboard Wave Icon: 3 flowing wave lines */}
+          <div className="flex items-center justify-center">
+            <Waves className={`w-6 h-6 stroke-[2.2] ${isDark ? 'text-[#18c9e8]' : 'text-[#0284c7]'}`} />
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold text-base sm:text-lg tracking-tight text-white font-['DM_Sans',sans-serif]">
-                Sindhu<span className="text-cyan-300">Drishti</span>
-              </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-sky-950/80 border border-sky-800/50 text-cyan-300">
-                AI Water OS
-              </span>
-            </div>
-            <p className="text-[10px] font-mono text-zinc-400 hidden sm:block">
-              {currentBasin === 'hussainsagar' 
-                ? 'Krishna Basin · Urban Lake Intelligence'
-                : 'Godavari Basin · Debris Intelligence'}
-            </p>
+            <span className="font-display font-bold text-lg sm:text-xl tracking-tight">
+              Sindhu<span className={isDark ? 'text-[#18c9e8]' : 'text-[#0284c7]'}>Drishti</span>
+            </span>
           </div>
         </button>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#03091c]/80 border border-sky-950/80 rounded-2xl p-1 shadow-inner">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentTab === item.tab;
-            return (
+        {/* Center Editorial Links & Workspaces */}
+        {currentTab === 'landing' ? (
+          /* Moodboard Landing Navigation: Platform, Study Areas, About */
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+            <button
+              onClick={() => handleLandingScroll('platform-workflow')}
+              className={`transition-colors cursor-pointer ${
+                isDark ? 'text-zinc-300 hover:text-[#18c9e8]' : 'text-[#334e68] hover:text-[#0284c7] font-semibold'
+              }`}
+            >
+              Platform
+            </button>
+            <button
+              onClick={() => handleLandingScroll('focus-regions')}
+              className={`transition-colors cursor-pointer ${
+                isDark ? 'text-zinc-300 hover:text-[#18c9e8]' : 'text-[#334e68] hover:text-[#0284c7] font-semibold'
+              }`}
+            >
+              Study Areas
+            </button>
+            <button
+              onClick={() => handleLandingScroll('the-challenge')}
+              className={`transition-colors cursor-pointer ${
+                isDark ? 'text-zinc-300 hover:text-[#18c9e8]' : 'text-[#334e68] hover:text-[#0284c7] font-semibold'
+              }`}
+            >
+              About
+            </button>
+          </div>
+        ) : (
+          /* Application Workspace Navigation (Explore Map, Dashboard, Drift Lab, Reports) */
+          <div className="hidden lg:flex items-center gap-6">
+            <div className="flex items-center gap-5 text-xs font-medium">
               <button
-                key={item.tab}
-                onClick={() => onSelectTab(item.tab)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all duration-200 cursor-pointer ${
-                  isActive
-                    ? 'bg-gradient-to-r from-sky-500/20 to-blue-600/30 border border-cyan-400/60 text-cyan-200 shadow-[0_0_12px_rgba(56,189,248,0.2)]'
-                    : 'text-zinc-400 hover:text-white hover:bg-sky-950/40 border border-transparent'
+                onClick={() => onSelectTab('landing')}
+                className={`transition-colors cursor-pointer ${
+                  isDark ? 'text-zinc-400 hover:text-white' : 'text-[#536b88] hover:text-[#091e3a]'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-300' : 'text-zinc-400'}`} />
-                <span>{item.label}</span>
+                Overview
               </button>
-            );
-          })}
-        </nav>
+            </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-3">
-          {/* Multi-Basin Switcher (Scalability Proof) */}
-          <div className="hidden xl:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#030919] border border-sky-900/60 text-[11px] font-mono shadow-sm">
-            <span className="text-zinc-500">Basin:</span>
-            <select
-              aria-label="Target Watershed Basin"
-              value={currentBasin}
-              className="bg-transparent text-cyan-300 font-bold focus:outline-none cursor-pointer text-xs"
-              onChange={(e) => {
-                const next = e.target.value as BasinId;
-                if (onSelectBasin) {
-                  onSelectBasin(next);
-                }
-              }}
+            <div className={`w-[1px] h-4 ${isDark ? 'bg-zinc-800' : 'bg-[#cbd5e1]'}`} />
+
+            <nav
+              className={`flex items-center gap-1 rounded-xl p-1 border shadow-inner ${
+                isDark
+                  ? 'bg-[#051324]/80 border-[#0e2a47]/70'
+                  : 'bg-[#e4ecf4] border-[#d0dde9]'
+              }`}
             >
-              <option value="jayakwadi" className="bg-[#030919] text-white">🌊 Jayakwadi (Godavari) • Active</option>
-              <option value="hussainsagar" className="bg-[#030919] text-white">🏙️ Hussain Sagar (Krishna) • Urban</option>
-            </select>
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentTab === item.tab;
+                return (
+                  <button
+                    key={item.tab}
+                    onClick={() => onSelectTab(item.tab)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer ${
+                      isActive
+                        ? isDark
+                          ? 'bg-[#073b55] text-[#18c9e8] border border-[#18c9e8]/40 shadow-sm font-semibold'
+                          : 'bg-white text-[#0284c7] border border-[#cbd5e1] shadow-xs font-semibold'
+                        : isDark
+                          ? 'text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent'
+                          : 'text-[#4d6582] hover:text-[#06152b] hover:bg-white/70 border border-transparent'
+                    }`}
+                  >
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? (isDark ? 'text-[#18c9e8]' : 'text-[#0284c7]') : 'opacity-70'}`} />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
           </div>
+        )}
 
-          {/* Live Backend Health Pill */}
-          <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#030919] border border-sky-950 text-[10px] font-mono">
-            <span className={`w-2 h-2 rounded-full ${health?.status === 'healthy' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-            <span className="text-zinc-400">API:</span>
-            <span className={health?.status === 'healthy' ? 'text-emerald-300 font-semibold' : 'text-amber-300'}>
-              {health?.status ? 'Connected' : 'Offline'}
-            </span>
-          </div>
+        {/* Right Utility & Actions */}
+        <div className="flex items-center gap-3">
+          {/* Multi-Basin Switcher (shown on internal app tabs) */}
+          {currentTab !== 'landing' && (
+            <div
+              className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-mono shadow-sm ${
+                isDark
+                  ? 'bg-[#051324] border-[#0e2a47] text-zinc-300'
+                  : 'bg-white border-[#cbd5e1] text-[#091e3a]'
+              }`}
+            >
+              <Globe2 className="w-3.5 h-3.5 text-zinc-400" />
+              <select
+                aria-label="Target Watershed Basin"
+                value={currentBasin}
+                onChange={(e) => onSelectBasin && onSelectBasin(e.target.value as BasinId)}
+                className="bg-transparent border-none outline-none cursor-pointer pr-1 text-inherit font-inherit"
+              >
+                <option value="jayakwadi" className={isDark ? 'bg-[#051324] text-white' : 'bg-white text-black'}>
+                  Jayakwadi (Godavari)
+                </option>
+                <option value="hussainsagar" className={isDark ? 'bg-[#051324] text-white' : 'bg-white text-black'}>
+                  Hussain Sagar (Hyderabad)
+                </option>
+              </select>
+            </div>
+          )}
 
-          {/* Quick Submit Report CTA */}
+          {/* Theme Toggle Pill (Sun ☼ / Moon ☾ matching moodboard) */}
           <button
-            onClick={onOpenReportModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-sky-400 to-[#6095f6] text-slate-950 font-bold text-xs hover:from-sky-300 hover:to-[#7096f2] transition-all shadow-[0_0_15px_rgba(96,149,246,0.3)] cursor-pointer"
+            onClick={toggleTheme}
+            className={`p-2 rounded-full border transition-all cursor-pointer flex items-center justify-center ${
+              isDark
+                ? 'border-white/20 bg-white/5 text-zinc-300 hover:text-white hover:bg-white/10'
+                : 'border-[#cbd5e1] bg-white text-[#1e3a5f] hover:text-[#091e3a] hover:bg-[#f1f5f9] shadow-xs'
+            }`}
+            title={`Switch to ${isDark ? 'Light' : 'Dark'} Theme`}
+            aria-label="Toggle visual theme"
           >
-            <PlusCircle className="w-3.5 h-3.5 text-slate-950" />
-            <span className="hidden sm:inline">Log</span>
-            <span>Report</span>
+            {isDark ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-sky-600" />}
           </button>
 
-          {/* Mobile Menu Button */}
+          {/* Solid Cyan Pill Button: Explore Platform → */}
+          <button
+            onClick={() => onSelectTab('explore-map')}
+            className={`px-5 py-2 rounded-full font-bold text-xs sm:text-sm transition-all shadow-md flex items-center gap-1.5 cursor-pointer font-display ${
+              isDark
+                ? 'bg-[#18c9e8] hover:bg-[#38d4f0] text-[#020817] shadow-[0_0_20px_rgba(24,201,232,0.35)]'
+                : 'bg-[#0284c7] hover:bg-[#0369a1] text-white shadow-[0_4px_14px_rgba(2,132,199,0.25)]'
+            }`}
+          >
+            <span>Explore Platform</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+
+          {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl bg-[#030919] border border-sky-950 text-zinc-300 hover:text-white"
-            aria-label="Toggle Navigation Menu"
+            className={`lg:hidden p-2 rounded-lg border cursor-pointer ${
+              isDark
+                ? 'border-zinc-700 text-zinc-300 hover:text-white'
+                : 'border-zinc-300 text-zinc-700 hover:text-black'
+            }`}
+            aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden px-4 pt-2 pb-4 bg-[#020617] border-b border-sky-950/80 space-y-2">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentTab === item.tab;
-            return (
-              <button
-                key={item.tab}
-                onClick={() => {
-                  onSelectTab(item.tab);
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium text-left ${
-                  isActive
-                    ? 'bg-sky-950/60 border border-cyan-400/50 text-cyan-200'
-                    : 'text-zinc-400 hover:bg-sky-950/30 text-white'
-                }`}
-              >
-                <Icon className="w-4 h-4 text-cyan-300" />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
+        <div
+          className={`lg:hidden px-4 pt-3 pb-5 border-b space-y-3 ${
+            isDark ? 'bg-[#020817] border-[#0e2a47]' : 'bg-white border-[#e2e8f0]'
+          }`}
+        >
+          <div className="grid grid-cols-2 gap-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentTab === item.tab;
+              return (
+                <button
+                  key={item.tab}
+                  onClick={() => {
+                    onSelectTab(item.tab);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium ${
+                    isActive
+                      ? isDark
+                        ? 'bg-[#073b55] text-[#18c9e8] font-bold border border-[#18c9e8]/40'
+                        : 'bg-[#edf2f7] text-[#0284c7] font-bold border border-[#cbd5e1]'
+                      : isDark
+                        ? 'text-zinc-300 hover:bg-white/5'
+                        : 'text-zinc-700 hover:bg-black/5'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 text-[#18c9e8]" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pt-2 border-t border-zinc-700/30 flex items-center justify-between">
+            <span className="text-xs text-zinc-400">Target Study Area:</span>
+            <select
+              value={currentBasin}
+              className={`bg-transparent text-xs font-mono font-bold ${
+                isDark ? 'text-[#18c9e8]' : 'text-[#0284c7]'
+              }`}
+              onChange={(e) => {
+                const next = e.target.value as BasinId;
+                if (onSelectBasin) onSelectBasin(next);
+              }}
+            >
+              <option value="jayakwadi" className={isDark ? 'bg-[#020817] text-white' : 'bg-white text-slate-900'}>
+                Jayakwadi (Godavari)
+              </option>
+              <option value="hussainsagar" className={isDark ? 'bg-[#020817] text-white' : 'bg-white text-slate-900'}>
+                Hussain Sagar (Krishna)
+              </option>
+            </select>
+          </div>
         </div>
       )}
     </header>

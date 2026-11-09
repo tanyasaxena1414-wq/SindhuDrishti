@@ -9,10 +9,11 @@ import {
 } from '../../types';
 import { DriftControls } from './DriftControls';
 import { DriftCanvas } from './DriftCanvas';
-import { DriftSummary } from './DriftSummary';
-import { Wind, Activity, AlertTriangle, RefreshCw, Crosshair } from 'lucide-react';
+import { Wind, AlertTriangle, RefreshCw } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 export const DriftPage: React.FC = () => {
+  const { isDark } = useTheme();
   const [params, setParams] = useState<DriftSimulateRequest>(() => {
     // Check if query params were passed from the map popover
     if (typeof window !== 'undefined') {
@@ -36,6 +37,8 @@ export const DriftPage: React.FC = () => {
           random_seed: 42,
           hotspot_id: qId,
           debris_name: qName,
+          debris_type: 'auto',
+          use_live_weather: true,
         };
       }
     }
@@ -48,12 +51,14 @@ export const DriftPage: React.FC = () => {
       particle_count: 1, // Single debris focused track by default
       current_velocity_ms: 0.22,
       current_direction_deg: 85, // Main Godavari channel flow towards Paithan Dam
-      wind_factor: 0.02,
+      wind_factor: 0.052,
       wind_speed_ms: 3.2,
       wind_direction_deg: 80,
       random_seed: 42,
       hotspot_id: 'pelagic-windrow-1',
       debris_name: 'Central Inflow Convergence Windrow Alpha',
+      debris_type: 'auto',
+      use_live_weather: true,
     };
   });
 
@@ -87,14 +92,14 @@ export const DriftPage: React.FC = () => {
 
   useEffect(() => {
     handleExecute();
-  }, [params.latitude, params.longitude, params.particle_count]);
+  }, [params.latitude, params.longitude, params.particle_count, params.debris_type, params.use_live_weather]);
 
   const [stepIndex, setStepIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   const maxSteps = simulation?.particles?.[0]?.trajectory?.length || 0;
 
-  // Single-source-of-truth playback loop (zero stale closures)
+  // Playback loop
   useEffect(() => {
     if (!isPlaying || maxSteps <= 1) return;
     const interval = setInterval(() => {
@@ -173,6 +178,7 @@ export const DriftPage: React.FC = () => {
       longitude: parseFloat(lon.toFixed(5)),
       hotspot_id: feat.id,
       debris_name: feat.properties?.name || feat.id,
+      debris_type: 'auto',
     }));
   };
 
@@ -183,26 +189,43 @@ export const DriftPage: React.FC = () => {
       longitude: parseFloat(lon.toFixed(5)),
       hotspot_id: 'custom-release',
       debris_name: `Custom Release Point (${lat.toFixed(3)}°N, ${lon.toFixed(3)}°E)`,
+      debris_type: 'auto',
       particle_count: 1,
     }));
   };
 
   return (
-    <div className="flex-1 w-full max-w-[1720px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 font-['DM_Sans',sans-serif]">
+    <div className="flex-1 w-full max-w-[1720px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 font-sans">
       {/* Workspace Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-sky-950/70">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-cyan-950/80 border border-cyan-800/60 flex items-center justify-center text-cyan-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
-            <Wind className="w-4 h-4" />
+      <div 
+        className={`flex flex-wrap items-center justify-between gap-3 pb-3 border-b transition-colors ${
+          isDark ? 'border-[#0e2a47]' : 'border-[#cbd5e1]'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div 
+            className={`w-9 h-9 rounded-xl flex items-center justify-center border shadow-sm ${
+              isDark 
+                ? 'bg-[#073b55] border-[#18c9e8]/40 text-[#18c9e8]' 
+                : 'bg-[#dceaf4] border-[#cbd5e1] text-[#0284c7]'
+            }`}
+          >
+            <Wind className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <h1 className="font-display text-base sm:text-lg font-bold tracking-tight flex items-center gap-2">
               <span>NGO Field Recovery & Drift Hub</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800/40">
-                AUTO-HYDRODYNAMICS
+              <span 
+                className={`text-[10px] font-mono px-2 py-0.5 rounded uppercase font-semibold ${
+                  isDark 
+                    ? 'bg-[#051324] text-[#18c9e8] border border-[#18c9e8]/30' 
+                    : 'bg-[#edf2f7] text-[#0284c7] border border-[#cbd5e1]'
+                }`}
+              >
+                Auto-Hydrodynamics
               </span>
             </h1>
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-zinc-500">
               Select detected debris anomalies and follow the hour-by-hour field collection schedule
             </p>
           </div>
@@ -212,16 +235,20 @@ export const DriftPage: React.FC = () => {
           type="button"
           onClick={handleExecute}
           disabled={isLoading}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#030919] border border-sky-900/60 text-xs font-mono text-zinc-300 hover:text-white hover:border-cyan-400 transition-all cursor-pointer disabled:opacity-50"
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer disabled:opacity-50 ${
+            isDark 
+              ? 'bg-[#051324] border-[#0e2a47] text-zinc-300 hover:text-white hover:border-[#18c9e8]' 
+              : 'bg-white border-[#cbd5e1] text-zinc-700 hover:text-black hover:border-[#0284c7]'
+          }`}
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-[#18c9e8]' : ''}`} />
           <span>Re-Simulate Flow</span>
         </button>
       </div>
 
       {errorMessage && (
-        <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-800/50 flex items-center gap-3 text-xs text-amber-200">
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-3 text-xs text-amber-500">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
@@ -240,25 +267,21 @@ export const DriftPage: React.FC = () => {
           isLoading={isLoading}
         />
 
-        {/* Center & Right: Canvas + Output Summary */}
-        <div className="flex-1 flex flex-col gap-5">
-          <div className="flex-1 min-h-[480px]">
-            <DriftCanvas 
-              simulation={simulation} 
-              waterMasks={waterMasks} 
-              hotspots={hotspots}
-              onSelectHotspot={handleSelectHotspotFromMap}
-              onSelectCustomLocation={handleSelectCustomLocation}
-              stepIndex={stepIndex}
-              isPlaying={isPlaying}
-              onTogglePlay={handleTogglePlay}
-              onResetPlay={handleResetPlay}
-              onStepChange={handleStepChange}
-              isLoading={isLoading} 
-            />
-          </div>
-
-          <DriftSummary simulation={simulation} />
+        {/* Center & Right: Simulation Map & Particle Playback */}
+        <div className="flex-1 flex flex-col min-h-[580px]">
+          <DriftCanvas 
+            simulation={simulation} 
+            waterMasks={waterMasks} 
+            hotspots={hotspots}
+            onSelectHotspot={handleSelectHotspotFromMap}
+            onSelectCustomLocation={handleSelectCustomLocation}
+            stepIndex={stepIndex}
+            isPlaying={isPlaying}
+            onTogglePlay={handleTogglePlay}
+            onResetPlay={handleResetPlay}
+            onStepChange={handleStepChange}
+            isLoading={isLoading} 
+          />
         </div>
       </div>
     </div>

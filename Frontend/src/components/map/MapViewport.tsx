@@ -23,6 +23,7 @@ import {
 } from '../../types';
 import { MapLayerState } from './MapControls';
 import { HotspotPopover } from './HotspotPopover';
+import { useTheme } from '../../context/ThemeContext';
 
 interface MapViewportProps {
   studyArea: StudyAreaMetadata | null;
@@ -79,6 +80,7 @@ export const MapViewport: React.FC<MapViewportProps> = ({
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const { isDark } = useTheme();
 
   // Layer groups refs to update without re-instantiating the map
   const basemapLayerRef = useRef<L.TileLayer | null>(null);
@@ -486,7 +488,7 @@ export const MapViewport: React.FC<MapViewportProps> = ({
   return (
     <div
       className={`relative w-full h-full min-h-[580px] overflow-hidden select-none bg-[#02050f] ${
-        isFullscreen ? 'fixed inset-0 z-50 rounded-none' : 'rounded-2xl border border-sky-950/70 shadow-2xl'
+        isFullscreen ? 'fixed inset-0 z-50 rounded-none' : `rounded-2xl border ${isDark ? 'border-sky-950/70 shadow-2xl' : 'border-[#c8d8e8] shadow-lg'}`
       }`}
     >
       {/* 1. ACTUAL LEAFLET MAP ELEMENT */}

@@ -13,6 +13,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { DriftSimulateResponse, GeoJSONFeatureCollection, WaterMaskProperties, HotspotProperties } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DriftCanvasProps {
   simulation: DriftSimulateResponse | null;
@@ -334,24 +335,25 @@ export const DriftCanvas: React.FC<DriftCanvasProps> = ({
   const currentStepTime = particles[0]?.trajectory[stepIndex]?.time_offset_hours ?? 0;
   const totalDuration = simulation?.parameters?.duration_hours ?? 24;
   const summary = simulation?.summary;
+  const { isDark } = useTheme();
 
   return (
-    <div className="relative w-full h-full min-h-[580px] bg-[#020512] rounded-2xl border border-sky-950/70 shadow-2xl flex flex-col overflow-hidden select-none font-['DM_Sans',sans-serif]">
+    <div className={`relative w-full h-full min-h-[580px] ${isDark ? 'bg-[#020512] border-sky-950/70 shadow-2xl' : 'bg-[#f0f4f8] border-[#c8d8e8] shadow-lg'} rounded-2xl border flex flex-col overflow-hidden select-none font-['DM_Sans',sans-serif]`}>
       {/* Top Status Bar */}
-      <div className="p-3.5 px-4 bg-[#03091c]/90 border-b border-sky-950/70 flex items-center justify-between text-xs font-mono z-10 backdrop-blur-md">
+      <div className={`p-3.5 px-4 ${isDark ? 'bg-[#03091c]/90 border-sky-950/70' : 'bg-white/95 border-[#c8d8e8]'} border-b flex items-center justify-between text-xs font-mono z-10 backdrop-blur-md`}>
         <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-cyan-400" />
-          <span className="font-bold text-white tracking-wide">
+          <Activity className={`w-4 h-4 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
+          <span className={`font-bold ${isDark ? 'text-white' : 'text-[#06152b]'} tracking-wide`}>
             {summary?.tracked_debris_name ? `Tracking: ${summary.tracked_debris_name}` : 'Hydrodynamic Drift Simulator'}
           </span>
-          <span className="text-zinc-500">|</span>
-          <span className="text-cyan-300">
-            {isSingleDebris ? 'Single Debris Streamline' : `${particles.length} Particle Plume`}
+          <span className={isDark ? 'text-zinc-500' : 'text-slate-400'}>|</span>
+          <span className={isDark ? 'text-cyan-300' : 'text-[#0369a1]'}>
+            {summary?.debris_label ? summary.debris_label.split('(')[0].trim() : (isSingleDebris ? 'Single Debris Streamline' : `${particles.length} Particle Plume`)}
           </span>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-cyan-300 font-bold bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-800/40">
+          <div className={`flex items-center gap-1.5 ${isDark ? 'text-cyan-300 bg-cyan-950/60 border-cyan-800/40' : 'text-[#0369a1] bg-[#e0f2fe] border-[#bae6fd]'} font-bold px-2.5 py-1 rounded-lg border`}>
             <Clock className="w-3.5 h-3.5" />
             <span>+{currentStepTime.toFixed(1)}h / {totalDuration}h elapsed</span>
           </div>
@@ -414,7 +416,7 @@ export const DriftCanvas: React.FC<DriftCanvasProps> = ({
       </div>
 
       {/* Bottom Playback Controls Strip */}
-      <div className="p-3.5 px-6 bg-[#03091c]/95 border-t border-sky-950/80 flex items-center justify-between gap-4 z-10">
+      <div className={`p-3.5 px-6 ${isDark ? 'bg-[#03091c]/95 border-sky-950/80' : 'bg-white/95 border-[#c8d8e8]'} border-t flex items-center justify-between gap-4 z-10`}>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -439,7 +441,7 @@ export const DriftCanvas: React.FC<DriftCanvasProps> = ({
             type="button"
             onClick={onResetPlay}
             disabled={!simulation}
-            className="p-2 rounded-xl bg-[#030919] border border-sky-950 text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-40"
+            className={`p-2 rounded-xl ${isDark ? 'bg-[#030919] border-sky-950 text-zinc-400 hover:text-white' : 'bg-[#f1f5f9] border-[#cbd5e1] text-slate-600 hover:text-[#06152b]'} border transition-colors cursor-pointer disabled:opacity-40`}
             title="Reset to T0"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -448,7 +450,7 @@ export const DriftCanvas: React.FC<DriftCanvasProps> = ({
 
         {/* Timeline Scrubber */}
         <div className="flex-1 flex items-center gap-3">
-          <span className="text-[10px] font-mono text-zinc-500">T=0h</span>
+          <span className={`text-[10px] font-mono ${isDark ? 'text-zinc-500' : 'text-slate-500'}`}>T=0h</span>
           <input
             type="range"
             min="0"
@@ -456,9 +458,9 @@ export const DriftCanvas: React.FC<DriftCanvasProps> = ({
             value={stepIndex}
             onChange={(e) => onStepChange(parseInt(e.target.value, 10))}
             disabled={!simulation || maxSteps <= 1}
-            className="w-full accent-cyan-400 bg-slate-900 h-2 rounded cursor-pointer disabled:opacity-30"
+            className={`w-full accent-cyan-500 ${isDark ? 'bg-slate-900' : 'bg-[#cbd5e1]'} h-2 rounded cursor-pointer disabled:opacity-30`}
           />
-          <span className="text-[10px] font-mono text-cyan-300 font-bold whitespace-nowrap">
+          <span className={`text-[10px] font-mono ${isDark ? 'text-cyan-300' : 'text-[#0369a1]'} font-bold whitespace-nowrap`}>
             T={currentStepTime.toFixed(1)}h / {totalDuration}h
           </span>
         </div>

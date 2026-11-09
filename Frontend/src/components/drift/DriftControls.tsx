@@ -26,7 +26,8 @@ import {
   Download,
   FileText,
   X,
-  Users
+  Users,
+  Info
 } from 'lucide-react';
 import { 
   DriftSimulateRequest, 
@@ -36,6 +37,8 @@ import {
   GeoJSONFeature,
   InterceptionWaypoint 
 } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
+import { api } from '../../services/api';
 
 interface DriftControlsProps {
   params: DriftSimulateRequest;
@@ -73,12 +76,36 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
   onExecute,
   isLoading,
 }) => {
+  const { isDark } = useTheme();
   const [selectedDebrisId, setSelectedDebrisId] = useState<string>(params.hotspot_id || 'pelagic-windrow-1');
   const [copiedHour, setCopiedHour] = useState<number | null>(null);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [showDispatchModal, setShowDispatchModal] = useState<boolean>(false);
+  const [isDownloadingGpx, setIsDownloadingGpx] = useState<boolean>(false);
   const scheduleContainerRef = useRef<HTMLDivElement | null>(null);
   const activeWaypointRef = useRef<HTMLDivElement | null>(null);
+
+  const classificationMeta = simulation?.summary?.classification_metadata;
+
+  const handleDownloadGPX = async () => {
+    try {
+      setIsDownloadingGpx(true);
+      const blob = await api.exportDriftGpx(params);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sindhudrishti_${params.hotspot_id || 'drift'}_waypoints.gpx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error('Failed to export GPX', err);
+      alert('Could not export GPX file: ' + (err.message || 'Unknown error'));
+    } finally {
+      setIsDownloadingGpx(false);
+    }
+  };
 
   // Keep viewport and window scroll perfectly stable during playback.
   // Scroll strictly inside the local schedule container using container.scrollTop.
@@ -131,8 +158,9 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
         longitude: parseFloat(centroid[1].toFixed(5)),
         hotspot_id: feat.id,
         debris_name: name,
-        // Auto-configure optimal single-debris tracking
+        // Auto-configure optimal single-debris tracking with auto classification
         particle_count: 1,
+        debris_type: params.debris_type && params.debris_type !== 'auto' ? params.debris_type : 'auto',
       });
     }
   };
@@ -546,25 +574,41 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
 
   return (
     <>
-      <aside className="w-full lg:w-96 xl:w-104 shrink-0 bg-[#020614]/95 border border-sky-950/80 rounded-2xl flex flex-col overflow-hidden backdrop-blur-xl shadow-2xl select-none font-['DM_Sans',sans-serif]">
+      <aside 
+        className={`w-full lg:w-96 xl:w-104 shrink-0 rounded-2xl flex flex-col overflow-hidden backdrop-blur-xl shadow-xl select-none font-sans border transition-colors ${
+          isDark ? 'bg-[#020817]/95 border-[#0e2a47] text-[#f8fafc]' : 'bg-white/95 border-[#cbd5e1] text-[#0f172a]'
+        }`}
+      >
       {/* Header */}
-      <div className="p-4 border-b border-sky-950/70 bg-[#03091c]/90 flex items-center justify-between">
+      <div 
+        className={`p-4 border-b flex items-center justify-between ${
+          isDark ? 'bg-[#051324] border-[#0e2a47]' : 'bg-slate-50 border-[#cbd5e1]'
+        }`}
+      >
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-cyan-950 border border-cyan-800/80 flex items-center justify-center text-cyan-400 shadow-[0_0_12px_rgba(56,189,248,0.25)]">
+          <div 
+            className={`w-8 h-8 rounded-xl flex items-center justify-center border shadow-sm ${
+              isDark ? 'bg-[#073b55] border-[#18c9e8]/50 text-[#18c9e8]' : 'bg-[#dceaf4] border-[#cbd5e1] text-[#0284c7]'
+            }`}
+          >
             <Truck className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-white tracking-wide uppercase font-mono">
+            <h3 className="text-xs font-bold tracking-wide uppercase font-mono">
               NGO Field Dispatch Hub
             </h3>
-            <p className="text-[11px] text-zinc-400">
+            <p className="text-[11px] text-zinc-500">
               Hour-by-Hour Debris Interception
             </p>
           </div>
         </div>
 
-        <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-800 text-emerald-300 font-bold flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span className={`text-[9px] font-mono px-2 py-0.5 rounded-full border font-bold flex items-center gap-1 ${
+          isDark 
+            ? 'bg-emerald-950/80 border-emerald-800 text-emerald-300' 
+            : 'bg-emerald-100 border-emerald-300 text-emerald-800'
+        }`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
           AUTO-PILOT ACTIVE
         </span>
       </div>
@@ -572,37 +616,72 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
       <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
         
         {/* 1. AUTOMATIC METEOROLOGICAL LIVE STREAM CARD */}
-        <div className="p-3 rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/20 to-[#020b1c] space-y-1.5 font-mono text-[10px]">
-          <div className="flex items-center justify-between text-emerald-300 font-bold">
+        <div className={`p-3 rounded-xl border space-y-1.5 font-mono text-[10px] ${
+          isDark 
+            ? 'border-emerald-500/30 bg-gradient-to-r from-emerald-950/20 to-[#020b1c]' 
+            : 'border-emerald-300/60 bg-emerald-50/70'
+        }`}>
+          <div className={`flex items-center justify-between font-bold ${
+            isDark ? 'text-emerald-300' : 'text-emerald-800'
+          }`}>
             <span className="flex items-center gap-1.5">
-              <Compass className="w-3.5 h-3.5 text-emerald-400" />
-              Auto Hydrodynamic Feed
+              <Compass className="w-3.5 h-3.5 text-emerald-500" />
+              Hydrodynamic & Weather Feed
             </span>
-            <span className="text-zinc-500">Jayakwadi Basin Model</span>
+            <span className={`text-[9px] px-1.5 py-0.5 rounded border font-bold ${
+              params.use_live_weather !== false
+                ? (isDark ? 'bg-emerald-950 border-emerald-800 text-emerald-300' : 'bg-emerald-100 border-emerald-300 text-emerald-800')
+                : (isDark ? 'bg-zinc-900 border-zinc-700 text-zinc-400' : 'bg-slate-200 border-slate-300 text-slate-700')
+            }`}>
+              {params.use_live_weather !== false ? '● Live ECMWF/GFS' : 'Manual Vectors'}
+            </span>
           </div>
-          <div className="grid grid-cols-2 gap-2 text-zinc-300">
+          <div className={`grid grid-cols-2 gap-2 ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>
             <div>
-              <span className="text-zinc-500 block">Current Flow:</span>
-              <span className="text-white font-bold">{params.current_velocity_ms} m/s ({params.current_direction_deg}° Downstream)</span>
+              <span className={`${isDark ? 'text-zinc-500' : 'text-slate-500'} block`}>Current Flow:</span>
+              <span className={`${isDark ? 'text-white' : 'text-[#06152b]'} font-bold`}>
+                2D Thalweg Field (~{params.current_velocity_ms} m/s)
+              </span>
             </div>
             <div>
-              <span className="text-zinc-500 block">Trade Wind Leeway:</span>
-              <span className="text-white font-bold">{params.wind_speed_ms} m/s ({params.wind_direction_deg}° Trade)</span>
+              <span className={`${isDark ? 'text-zinc-500' : 'text-slate-500'} block`}>Atmospheric 10m Wind:</span>
+              <span className={`${isDark ? 'text-white' : 'text-[#06152b]'} font-bold`}>
+                {params.wind_speed_ms} m/s @ {params.wind_direction_deg}°
+              </span>
             </div>
           </div>
-          <p className="text-[9px] text-zinc-400 pt-0.5">
-            Parameters are automatically matched to current reservoir drift conditions.
-          </p>
+          <div className="flex items-center justify-between pt-0.5">
+            <p className={`text-[9px] ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
+              Coupled Eulerian current & Allen & Plourde leeway dynamics.
+            </p>
+            <button
+              type="button"
+              onClick={() => onChangeParams({ use_live_weather: params.use_live_weather === false ? true : false })}
+              className={`text-[9px] underline cursor-pointer font-bold ${isDark ? 'text-cyan-400 hover:text-cyan-300' : 'text-cyan-700 hover:text-cyan-900'}`}
+            >
+              {params.use_live_weather !== false ? 'Use manual vectors' : 'Use live forecast'}
+            </button>
+          </div>
         </div>
 
         {/* 2. TARGET DEBRIS HOTSPOT PICKER */}
-        <div className="p-3.5 rounded-xl border border-cyan-500/50 bg-gradient-to-br from-[#031338]/80 to-[#020a1f] space-y-2.5 shadow-lg">
+        <div className={`p-3.5 rounded-xl border space-y-2.5 shadow-lg ${
+          isDark 
+            ? 'border-cyan-500/50 bg-gradient-to-br from-[#031338]/80 to-[#020a1f]' 
+            : 'border-[#bae6fd] bg-[#f8fbfe]'
+        }`}>
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide flex items-center gap-1.5">
-              <Crosshair className="w-3.5 h-3.5 text-cyan-400" />
+            <span className={`text-[10px] font-mono font-bold uppercase tracking-wide flex items-center gap-1.5 ${
+              isDark ? 'text-cyan-300' : 'text-[#0369a1]'
+            }`}>
+              <Crosshair className="w-3.5 h-3.5 text-cyan-500" />
               1. Choose Detected Debris Anomaly
             </span>
-            <span className="text-[9px] font-mono text-cyan-300 font-bold bg-cyan-950/90 px-2 py-0.5 rounded border border-cyan-800">
+            <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border ${
+              isDark 
+                ? 'text-cyan-300 bg-cyan-950/90 border-cyan-800' 
+                : 'text-[#0369a1] bg-sky-100 border-sky-300'
+            }`}>
               {hotspots?.features?.length ?? 141} DETECTED
             </span>
           </div>
@@ -611,7 +690,11 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
             <select
               value={selectedDebrisId}
               onChange={(e) => handleSelectDebris(e.target.value)}
-              className="w-full bg-[#030919] border border-sky-800 rounded-lg px-2.5 py-2 text-xs text-white font-mono focus:outline-none focus:border-cyan-400 cursor-pointer"
+              className={`w-full rounded-lg px-2.5 py-2 text-xs font-mono focus:outline-none cursor-pointer border ${
+                isDark 
+                  ? 'bg-[#030919] border-sky-800 text-white focus:border-cyan-400' 
+                  : 'bg-white border-[#c8d8e8] text-[#06152b] focus:border-[#0284c7]'
+              }`}
             >
               <option value="">-- Click on Map or Choose Hotspot --</option>
               {pelagicHotspots.length > 0 && (
@@ -637,18 +720,26 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
 
           {/* Custom Release Indicator Banner */}
           {params.hotspot_id === 'custom-release' && (
-            <div className="p-2.5 rounded-lg border border-purple-500/60 bg-gradient-to-r from-purple-950/50 to-[#02081c] flex items-center justify-between text-[10px] font-mono shadow-md">
+            <div className={`p-2.5 rounded-lg border flex items-center justify-between text-[10px] font-mono shadow-md ${
+              isDark 
+                ? 'border-purple-500/60 bg-gradient-to-r from-purple-950/50 to-[#02081c]' 
+                : 'border-purple-300 bg-purple-50'
+            }`}>
               <div className="flex items-center gap-2">
-                <Target className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
+                <Target className="w-3.5 h-3.5 text-purple-500 animate-pulse" />
                 <div>
-                  <span className="text-white font-bold block">Custom Map Release Beacon</span>
-                  <span className="text-purple-300 text-[9px]">{params.latitude.toFixed(4)}°N, {params.longitude.toFixed(4)}°E</span>
+                  <span className={`font-bold block ${isDark ? 'text-white' : 'text-purple-950'}`}>Custom Map Release Beacon</span>
+                  <span className={`${isDark ? 'text-purple-300' : 'text-purple-700'} text-[9px]`}>{params.latitude.toFixed(4)}°N, {params.longitude.toFixed(4)}°E</span>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => handleSelectDebris('pelagic-windrow-1')}
-                className="px-2 py-0.5 rounded bg-purple-900/70 border border-purple-600 text-[9px] text-purple-200 hover:text-white cursor-pointer"
+                className={`px-2 py-0.5 rounded border text-[9px] cursor-pointer ${
+                  isDark 
+                    ? 'bg-purple-900/70 border-purple-600 text-purple-200 hover:text-white' 
+                    : 'bg-purple-100 border-purple-300 text-purple-800 hover:bg-purple-200'
+                }`}
               >
                 Reset Hotspot
               </button>
@@ -657,12 +748,16 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
 
           {/* Active Debris Dossier Card */}
           {activeHotspot && params.hotspot_id !== 'custom-release' && (
-            <div className="p-2.5 rounded-lg bg-[#02081c] border border-sky-900/60 text-[10px] font-mono space-y-1">
-              <div className="flex items-center justify-between text-white font-bold">
+            <div className={`p-2.5 rounded-lg border text-[10px] font-mono space-y-1 ${
+              isDark 
+                ? 'bg-[#02081c] border-sky-900/60' 
+                : 'bg-[#edf5fb] border-[#b8d4e8]'
+            }`}>
+              <div className={`flex items-center justify-between font-bold ${isDark ? 'text-white' : 'text-[#06152b]'}`}>
                 <span className="truncate">{activeHotspot.properties?.name}</span>
-                <span className="text-cyan-400">FDI: +{activeHotspot.properties?.fdi_value}</span>
+                <span className={isDark ? 'text-cyan-400' : 'text-[#0284c7]'}>FDI: +{activeHotspot.properties?.fdi_value}</span>
               </div>
-              <div className="flex items-center justify-between text-zinc-400 text-[9px]">
+              <div className={`flex items-center justify-between text-[9px] ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
                 <span>MARIDA: {activeHotspot.properties?.marida_class?.replace(/_/g, ' ')}</span>
                 <span>Area: {Math.round(activeHotspot.properties?.area_m2 ?? 12000).toLocaleString()} m²</span>
               </div>
@@ -670,82 +765,219 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
           )}
         </div>
 
+        {/* 2. AUTOMATED MODEL DEBRIS CLASSIFICATION & WINDAGE PROFILE */}
+        {simulation?.summary && (
+          <div className={`p-3.5 rounded-xl border space-y-2.5 shadow-md ${
+            isDark 
+              ? 'border-sky-800/60 bg-gradient-to-br from-[#020e24] to-[#010818]' 
+              : 'border-[#bae6fd] bg-[#f8fbfe]'
+          }`}>
+            <div className="flex items-center justify-between">
+              <span className={`text-[10px] font-mono font-bold uppercase tracking-wide flex items-center gap-1.5 ${
+                isDark ? 'text-cyan-300' : 'text-[#0369a1]'
+              }`}>
+                <Layers className="w-3.5 h-3.5 text-cyan-500" />
+                2. Inferred Debris Typology & Windage
+              </span>
+              <span className={`text-[9px] font-mono px-2 py-0.5 rounded border font-bold ${
+                classificationMeta?.is_auto_classified
+                  ? (isDark ? 'bg-cyan-950/90 border-cyan-700 text-cyan-300' : 'bg-sky-100 border-sky-300 text-sky-800')
+                  : (isDark ? 'bg-purple-950/90 border-purple-700 text-purple-300' : 'bg-purple-100 border-purple-300 text-purple-800')
+              }`}>
+                {classificationMeta?.is_auto_classified ? '● Auto-Classified' : '⚙️ Manual Override Active'}
+              </span>
+            </div>
+
+            {/* Category Details Banner */}
+            <div className={`p-2.5 rounded-lg border space-y-1.5 ${
+              isDark ? 'bg-[#020716] border-sky-900/50' : 'bg-white border-[#cbd5e1]'
+            }`}>
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <span className={`text-xs font-bold font-sans block ${isDark ? 'text-white' : 'text-[#0f172a]'}`}>
+                    {classificationMeta?.category_label || simulation.summary.debris_label || 'Unclassified Surface Flotsam'}
+                  </span>
+                  <span className={`text-[10px] font-mono block ${isDark ? 'text-cyan-300' : 'text-[#0284c7]'}`}>
+                    Auto-Mapped Leeway: {((simulation.summary.downwind_leeway_factor ?? 0.025) * 100).toFixed(1)}% Downwind Drag
+                  </span>
+                </div>
+                {classificationMeta?.is_default_profile && (
+                  <span className={`text-[9px] font-mono px-2 py-0.5 rounded border shrink-0 ${
+                    isDark ? 'bg-amber-950/70 border-amber-800 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-800'
+                  }`}>
+                    Default Baseline Profile
+                  </span>
+                )}
+              </div>
+
+              {/* Spectral Evidence Rationale */}
+              {classificationMeta?.evidence_basis && (
+                <div className={`pt-1.5 border-t text-[10px] ${isDark ? 'border-sky-950/80 text-zinc-300' : 'border-slate-100 text-slate-700'}`}>
+                  <span className="font-bold text-zinc-400 block font-mono text-[9px] uppercase tracking-wider mb-0.5">
+                    Spectral Evidence Basis:
+                  </span>
+                  <p className="leading-snug">{classificationMeta.evidence_basis}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Scientific Transparency Notice */}
+            <div className={`p-2 rounded-lg border flex items-start gap-2 text-[9.5px] leading-snug ${
+              isDark 
+                ? 'bg-sky-950/30 border-sky-900/40 text-zinc-400' 
+                : 'bg-slate-100 border-slate-200 text-slate-600'
+            }`}>
+              <Info className="w-3.5 h-3.5 text-cyan-500 shrink-0 mt-0.5" />
+              <span>
+                <strong>Model Classification Notice:</strong> Typology is inferred from Sentinel-2 10m–20m spectral signatures (FDI / NDVI), not verified ground identification of specific plastic items.
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* 3. NGO FIELD RESOURCE & ECONOMIC IMPACT ADVISORY */}
         {simulation?.summary && (
-          <div className="p-3.5 rounded-xl bg-gradient-to-br from-[#041a3d] to-[#020c24] border border-amber-500/40 shadow-lg space-y-2.5">
-            <div className="flex items-center justify-between text-amber-300 font-bold text-xs font-mono">
+          <div className={`p-3.5 rounded-xl border shadow-lg space-y-2.5 ${
+            isDark 
+              ? 'bg-gradient-to-br from-[#041a3d] to-[#020c24] border-amber-500/40' 
+              : 'bg-amber-50/70 border-amber-300'
+          }`}>
+            <div className={`flex items-center justify-between font-bold text-xs font-mono ${
+              isDark ? 'text-amber-300' : 'text-amber-800'
+            }`}>
               <span className="flex items-center gap-1.5">
-                <Target className="w-4 h-4 text-amber-400" />
+                <Target className="w-4 h-4 text-amber-500" />
                 RECOMMENDED COLLECTION WINDOW
               </span>
-              <span className="px-1.5 py-0.5 rounded bg-amber-950 border border-amber-700 text-[9px] text-amber-200">
+              <span className={`px-1.5 py-0.5 rounded border text-[9px] ${
+                isDark 
+                  ? 'bg-amber-950 border-amber-700 text-amber-200' 
+                  : 'bg-amber-100 border-amber-300 text-amber-800'
+              }`}>
                 ETA: ~{simulation.summary.estimated_shore_interception_hours ?? 3.0}h
               </span>
             </div>
 
-            <div className="text-[11px] text-zinc-200 leading-snug">
-              <p className="font-bold text-white mb-0.5">
+            <div className="text-[11px] leading-snug">
+              <p className={`font-bold mb-0.5 ${isDark ? 'text-white' : 'text-[#06152b]'}`}>
                 📍 Destination: {simulation.summary.destination_target}
               </p>
-              <p className="text-zinc-300 text-[10px]">
+              <p className={`text-[10px] ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>
                 {simulation.summary.recommended_action}
               </p>
             </div>
 
             {/* Economic Impact & Required Field Assets Metrics */}
-            <div className="pt-2 border-t border-sky-950 space-y-2 font-mono text-[10px]">
+            <div className={`pt-2 border-t space-y-2 font-mono text-[10px] ${
+              isDark ? 'border-sky-950' : 'border-amber-200/80'
+            }`}>
               <div className="grid grid-cols-2 gap-2">
-                <div className="p-2 rounded-lg bg-[#010817] border border-sky-900/50">
-                  <span className="text-zinc-500 text-[9px] block">ESTIMATED DEBRIS MASS</span>
-                  <span className="text-cyan-300 font-bold text-xs block">
+                <div className={`p-2 rounded-lg border ${
+                  isDark 
+                    ? 'bg-[#010817] border-sky-900/50' 
+                    : 'bg-white border-[#c8d8e8]'
+                }`}>
+                  <span className={`${isDark ? 'text-zinc-500' : 'text-slate-500'} text-[9px] block`}>ESTIMATED DEBRIS MASS</span>
+                  <span className={`${isDark ? 'text-cyan-300' : 'text-[#0284c7]'} font-bold text-xs block`}>
                     {simulation.summary.estimated_debris_mass_tons ?? 3.8} Metric Tons
                   </span>
-                  <span className="text-zinc-400 text-[9px]">
+                  <span className={`${isDark ? 'text-zinc-400' : 'text-slate-600'} text-[9px]`}>
                     ~{(simulation.summary.estimated_debris_mass_kg ?? 3800).toLocaleString()} kg macroplastics
                   </span>
                 </div>
 
-                <div className="p-2 rounded-lg bg-[#010817] border border-sky-900/50">
-                  <span className="text-zinc-500 text-[9px] block">INFRASTRUCTURE ROI</span>
-                  <span className="text-emerald-400 font-bold text-xs block">
+                <div className={`p-2 rounded-lg border ${
+                  isDark 
+                    ? 'bg-[#010817] border-sky-900/50' 
+                    : 'bg-white border-[#c8d8e8]'
+                }`}>
+                  <span className={`${isDark ? 'text-zinc-500' : 'text-slate-500'} text-[9px] block`}>INFRASTRUCTURE ROI</span>
+                  <span className={`${isDark ? 'text-emerald-400' : 'text-emerald-700'} font-bold text-xs block`}>
                     ₹{simulation.summary.economic_impact?.infrastructure_damage_prevented_lakhs ?? 14.8} Lakhs
                   </span>
-                  <span className="text-zinc-400 text-[9px]">
+                  <span className={`${isDark ? 'text-zinc-400' : 'text-slate-600'} text-[9px]`}>
                     {simulation.summary.economic_impact?.recovery_roi_multiplier ?? 8.4}x cleanup dividend
                   </span>
                 </div>
               </div>
 
               {/* Required Assets Manifest */}
-              <div className="p-2 rounded-lg bg-[#010817] border border-sky-900/50 space-y-1">
-                <span className="text-zinc-400 font-bold text-[9px] uppercase tracking-wide block">
+              <div className={`p-2 rounded-lg border space-y-1 ${
+                isDark 
+                  ? 'bg-[#010817] border-sky-900/50' 
+                  : 'bg-white border-[#c8d8e8]'
+              }`}>
+                <span className={`font-bold text-[9px] uppercase tracking-wide block ${
+                  isDark ? 'text-zinc-400' : 'text-slate-600'
+                }`}>
                   Field Asset Dispatch Requirement:
                 </span>
-                <div className="grid grid-cols-3 gap-1 text-[10px] text-white">
-                  <div className="flex items-center gap-1 text-cyan-300">
-                    <Truck className="w-3 h-3 text-cyan-400 shrink-0" />
+                <div className="grid grid-cols-3 gap-1 text-[10px]">
+                  <div className={`flex items-center gap-1 ${isDark ? 'text-cyan-300' : 'text-[#0284c7]'}`}>
+                    <Truck className="w-3 h-3 text-cyan-500 shrink-0" />
                     <span>{simulation.summary.field_assets?.skimmer_boats ?? 2} Skimmers</span>
                   </div>
-                  <div className="flex items-center gap-1 text-amber-300">
-                    <Anchor className="w-3 h-3 text-amber-400 shrink-0" />
+                  <div className={`flex items-center gap-1 ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>
+                    <Anchor className="w-3 h-3 text-amber-500 shrink-0" />
                     <span>{simulation.summary.field_assets?.containment_booms_meters ?? 200}m Boom</span>
                   </div>
-                  <div className="flex items-center gap-1 text-emerald-300">
-                    <Users className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <div className={`flex items-center gap-1 ${isDark ? 'text-emerald-300' : 'text-emerald-700'}`}>
+                    <Users className="w-3 h-3 text-emerald-500 shrink-0" />
                     <span>{simulation.summary.field_assets?.field_crew_count ?? 6} Crew</span>
                   </div>
                 </div>
               </div>
 
-              {/* 1-Click Field Dispatch Brief Export */}
-              <button
-                type="button"
-                onClick={() => setShowDispatchModal(true)}
-                className="w-full py-1.5 px-3 rounded-lg bg-gradient-to-r from-amber-500/20 to-cyan-500/20 hover:from-amber-500/30 hover:to-cyan-500/30 border border-amber-500/50 text-amber-200 hover:text-white font-bold text-[10px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-md"
-              >
-                <Printer className="w-3.5 h-3.5 text-amber-400" />
-                <span>Print / Download Field Dispatch Order</span>
-              </button>
+              {/* Confidence interval and Arrival Window */}
+              {(simulation.summary.confidence_radius_m || simulation.summary.p90_arrival_hour) && (
+                <div className="flex flex-wrap items-center gap-1.5 text-[9px] pt-1">
+                  {simulation.summary.confidence_radius_m && (
+                    <span className={`px-2 py-0.5 rounded font-mono border ${
+                      isDark ? 'bg-sky-950/70 border-sky-800 text-cyan-300' : 'bg-sky-100 border-sky-300 text-sky-800'
+                    }`}>
+                      Confidence Radius: ±{simulation.summary.confidence_radius_m}m
+                    </span>
+                  )}
+                  {simulation.summary.p90_arrival_hour && (
+                    <span className={`px-2 py-0.5 rounded font-mono border ${
+                      isDark ? 'bg-amber-950/70 border-amber-800 text-amber-300' : 'bg-amber-100 border-amber-300 text-amber-800'
+                    }`}>
+                      P50/P90 Window: +{simulation.summary.p50_arrival_hour ?? 3}h to +{simulation.summary.p90_arrival_hour}h
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* 1-Click Field Dispatch Brief Export & Garmin GPX Route Export */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowDispatchModal(true)}
+                  className={`py-1.5 px-3 rounded-lg border font-bold text-[10px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-md ${
+                    isDark 
+                      ? 'bg-gradient-to-r from-amber-500/20 to-cyan-500/20 hover:from-amber-500/30 hover:to-cyan-500/30 border-amber-500/50 text-amber-200 hover:text-white' 
+                      : 'bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-900'
+                  }`}
+                >
+                  <Printer className={`w-3.5 h-3.5 ${isDark ? 'text-amber-400' : 'text-amber-600'}`} />
+                  <span>Dispatch Mission Order</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleDownloadGPX}
+                  disabled={isDownloadingGpx}
+                  className={`py-1.5 px-3 rounded-lg border font-bold text-[10px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-md ${
+                    isDark 
+                      ? 'bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 hover:from-cyan-500/30 hover:to-emerald-500/30 border-cyan-500/50 text-cyan-200 hover:text-white' 
+                      : 'bg-sky-100 hover:bg-sky-200 border-sky-300 text-[#0369a1]'
+                  }`}
+                  title="Download GPX route for Garmin GPS, OsmAnd or Gaia GPS"
+                >
+                  <Navigation className="w-3.5 h-3.5 text-cyan-500" />
+                  <span>{isDownloadingGpx ? 'Exporting...' : 'Export Garmin GPX'}</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -753,11 +985,13 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
         {/* 4. HOUR-BY-HOUR COLLECTION SCHEDULE (The core tool for the NGO crew) */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wide flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-cyan-400" />
+            <span className={`text-[10px] font-mono font-bold uppercase tracking-wide flex items-center gap-1.5 ${
+              isDark ? 'text-zinc-400' : 'text-slate-600'
+            }`}>
+              <Clock className="w-3.5 h-3.5 text-cyan-500" />
               Hour-by-Hour Collection Schedule
             </span>
-            <span className="text-[9px] font-mono text-zinc-500">
+            <span className={`text-[9px] font-mono ${isDark ? 'text-zinc-500' : 'text-slate-500'}`}>
               Click hour to inspect on map
             </span>
           </div>
@@ -774,10 +1008,16 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
                   onClick={() => onSelectHour?.(wp.hour)}
                   className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-cyan-950/60 border-cyan-400 shadow-[0_0_12px_rgba(56,189,248,0.3)] ring-1 ring-cyan-400'
+                      ? isDark
+                        ? 'bg-cyan-950/60 border-cyan-400 shadow-[0_0_12px_rgba(56,189,248,0.3)] ring-1 ring-cyan-400'
+                        : 'bg-sky-100/90 border-[#0284c7] shadow-sm ring-1 ring-[#0284c7]'
                       : wp.is_optimal
-                      ? 'bg-amber-950/30 border-amber-500/60 hover:border-amber-400'
-                      : 'bg-[#030919] border-sky-950 hover:border-sky-800'
+                      ? isDark
+                        ? 'bg-amber-950/30 border-amber-500/60 hover:border-amber-400'
+                        : 'bg-amber-50 border-amber-300 hover:border-amber-400'
+                      : isDark
+                      ? 'bg-[#030919] border-sky-950 hover:border-sky-800'
+                      : 'bg-white border-[#d0dde9] hover:border-[#9ab9d4]'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -785,11 +1025,13 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
                       <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
                         wp.is_optimal
                           ? 'bg-amber-500 text-slate-950'
-                          : 'bg-cyan-950 text-cyan-300 border border-cyan-800'
+                          : isDark
+                          ? 'bg-cyan-950 text-cyan-300 border border-cyan-800'
+                          : 'bg-sky-100 text-[#0369a1] border border-sky-200'
                       }`}>
                         T+{wp.hour.toFixed(1)}h
                       </span>
-                      <span className="font-bold text-white text-[11px]">
+                      <span className={`font-bold text-[11px] ${isDark ? 'text-white' : 'text-[#06152b]'}`}>
                         {wp.is_optimal ? '⭐ Interception Beaching Point' : `Waypoint #${idx + 1}`}
                       </span>
                     </div>
@@ -797,13 +1039,17 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
                     <button
                       type="button"
                       onClick={(e) => handleCopyGPS(e, wp.latitude, wp.longitude, wp.hour)}
-                      className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-900 border border-sky-900/60 text-[9px] font-mono text-zinc-400 hover:text-cyan-300 hover:border-cyan-400 transition-colors cursor-pointer"
+                      className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono transition-colors cursor-pointer border ${
+                        isDark 
+                          ? 'bg-slate-900 border-sky-900/60 text-zinc-400 hover:text-cyan-300 hover:border-cyan-400' 
+                          : 'bg-[#edf3f9] border-[#cbd5e1] text-slate-600 hover:text-[#0284c7] hover:border-[#0284c7]'
+                      }`}
                       title="Copy GPS coordinates"
                     >
                       {copiedHour === wp.hour ? (
                         <>
-                          <Check className="w-2.5 h-2.5 text-emerald-400" />
-                          <span className="text-emerald-400">Copied!</span>
+                          <Check className="w-2.5 h-2.5 text-emerald-500" />
+                          <span className="text-emerald-500 font-bold">Copied!</span>
                         </>
                       ) : (
                         <>
@@ -814,14 +1060,16 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between text-[10px] font-mono text-zinc-400 mb-1">
+                  <div className={`flex items-center justify-between text-[10px] font-mono mb-1 ${
+                    isDark ? 'text-zinc-400' : 'text-slate-500'
+                  }`}>
                     <span>GPS: {wp.latitude.toFixed(4)}° N, {wp.longitude.toFixed(4)}° E</span>
-                    <span className={isBeached ? 'text-amber-400 font-bold' : 'text-cyan-300'}>
+                    <span className={isBeached ? (isDark ? 'text-amber-400 font-bold' : 'text-amber-600 font-bold') : (isDark ? 'text-cyan-300' : 'text-[#0369a1]')}>
                       {isBeached ? '🛑 At Shoreline' : '🌊 Pelagic Drift'}
                     </span>
                   </div>
 
-                  <p className="text-[10px] text-zinc-300 leading-tight">
+                  <p className={`text-[10px] leading-tight ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>
                     {wp.action}
                   </p>
                 </div>
@@ -831,11 +1079,15 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
         </div>
 
         {/* 5. COLLAPSIBLE ADVANCED HYDRODYNAMIC OVERRIDES (Optional) */}
-        <div className="border border-sky-950/80 rounded-xl overflow-hidden bg-[#030919]/50">
+        <div className={`border rounded-xl overflow-hidden ${
+          isDark ? 'border-sky-950/80 bg-[#030919]/50' : 'border-[#d0dde9] bg-[#f8fbfe]'
+        }`}>
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="w-full p-2.5 flex items-center justify-between text-[10px] font-mono text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            className={`w-full p-2.5 flex items-center justify-between text-[10px] font-mono transition-colors cursor-pointer ${
+              isDark ? 'text-zinc-400 hover:text-white' : 'text-slate-600 hover:text-[#06152b]'
+            }`}
           >
             <span className="flex items-center gap-1.5">
               <Sliders className="w-3.5 h-3.5" />
@@ -845,11 +1097,13 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
           </button>
 
           {showAdvanced && (
-            <div className="p-3 border-t border-sky-950 space-y-3 text-[10px] font-mono">
+            <div className={`p-3 border-t space-y-3 text-[10px] font-mono ${
+              isDark ? 'border-sky-950' : 'border-[#d0dde9]'
+            }`}>
               <div>
-                <div className="flex justify-between text-zinc-400 mb-1">
+                <div className={`flex justify-between mb-1 ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
                   <span>Current Velocity (m/s)</span>
-                  <span className="text-white">{params.current_velocity_ms} m/s</span>
+                  <span className={isDark ? 'text-white' : 'text-[#06152b] font-bold'}>{params.current_velocity_ms} m/s</span>
                 </div>
                 <input
                   type="range"
@@ -858,14 +1112,14 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
                   step="0.05"
                   value={params.current_velocity_ms}
                   onChange={(e) => onChangeParams({ current_velocity_ms: parseFloat(e.target.value) })}
-                  className="w-full accent-cyan-400 bg-slate-900 h-1.5 rounded cursor-pointer"
+                  className={`w-full accent-cyan-500 ${isDark ? 'bg-slate-900' : 'bg-[#cbd5e1]'} h-1.5 rounded cursor-pointer`}
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-zinc-400 mb-1">
+                <div className={`flex justify-between mb-1 ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
                   <span>Current Direction</span>
-                  <span className="text-white">{params.current_direction_deg}°</span>
+                  <span className={isDark ? 'text-white' : 'text-[#06152b] font-bold'}>{params.current_direction_deg}°</span>
                 </div>
                 <input
                   type="range"
@@ -874,14 +1128,14 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
                   step="15"
                   value={params.current_direction_deg}
                   onChange={(e) => onChangeParams({ current_direction_deg: parseFloat(e.target.value) })}
-                  className="w-full accent-cyan-400 bg-slate-900 h-1.5 rounded cursor-pointer"
+                  className={`w-full accent-cyan-500 ${isDark ? 'bg-slate-900' : 'bg-[#cbd5e1]'} h-1.5 rounded cursor-pointer`}
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-zinc-400 mb-1">
+                <div className={`flex justify-between mb-1 ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
                   <span>Wind Speed (m/s)</span>
-                  <span className="text-white">{params.wind_speed_ms} m/s</span>
+                  <span className={isDark ? 'text-white' : 'text-[#06152b] font-bold'}>{params.wind_speed_ms} m/s</span>
                 </div>
                 <input
                   type="range"
@@ -890,14 +1144,14 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
                   step="0.5"
                   value={params.wind_speed_ms}
                   onChange={(e) => onChangeParams({ wind_speed_ms: parseFloat(e.target.value) })}
-                  className="w-full accent-cyan-400 bg-slate-900 h-1.5 rounded cursor-pointer"
+                  className={`w-full accent-cyan-500 ${isDark ? 'bg-slate-900' : 'bg-[#cbd5e1]'} h-1.5 rounded cursor-pointer`}
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-zinc-400 mb-1">
+                <div className={`flex justify-between mb-1 ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
                   <span>Wind Direction</span>
-                  <span className="text-white">{params.wind_direction_deg}°</span>
+                  <span className={isDark ? 'text-white' : 'text-[#06152b] font-bold'}>{params.wind_direction_deg}°</span>
                 </div>
                 <input
                   type="range"
@@ -906,8 +1160,41 @@ export const DriftControls: React.FC<DriftControlsProps> = ({
                   step="15"
                   value={params.wind_direction_deg}
                   onChange={(e) => onChangeParams({ wind_direction_deg: parseFloat(e.target.value) })}
-                  className="w-full accent-cyan-400 bg-slate-900 h-1.5 rounded cursor-pointer"
+                  className={`w-full accent-cyan-500 ${isDark ? 'bg-slate-900' : 'bg-[#cbd5e1]'} h-1.5 rounded cursor-pointer`}
                 />
+              </div>
+
+              {/* Manual Debris Typology Override */}
+              <div className="pt-2 border-t border-sky-950/60">
+                <div className={`flex justify-between items-center mb-1.5 ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
+                  <span>Manual Debris Typology Override</span>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${
+                    params.debris_type && params.debris_type !== 'auto'
+                      ? (isDark ? 'bg-purple-950 border border-purple-800 text-purple-300' : 'bg-purple-100 border border-purple-300 text-purple-800')
+                      : (isDark ? 'bg-cyan-950 border border-cyan-800 text-cyan-300' : 'bg-sky-100 border border-sky-300 text-sky-800')
+                  }`}>
+                    {params.debris_type && params.debris_type !== 'auto' ? 'Manual Override Active' : '● Auto-Classified'}
+                  </span>
+                </div>
+                <select
+                  value={params.debris_type || 'auto'}
+                  onChange={(e) => onChangeParams({ debris_type: e.target.value })}
+                  className={`w-full rounded-lg px-2.5 py-1.5 text-xs font-mono focus:outline-none cursor-pointer border ${
+                    isDark 
+                      ? 'bg-[#030919] border-sky-800 text-white focus:border-cyan-400' 
+                      : 'bg-white border-[#c8d8e8] text-[#06152b] focus:border-[#0284c7]'
+                  }`}
+                >
+                  <option value="auto">⚡ Auto-Classified from Satellite Telemetry (Recommended)</option>
+                  <option value="rigid_plastic">🍾 Override: Buoyant Macroplastics (5.2% Leeway)</option>
+                  <option value="hyacinth_mat">🌿 Override: Water Hyacinth Biomass (2.8% Leeway)</option>
+                  <option value="film_plastic">🛍️ Override: Semi-Submerged Flotsam (1.9% Leeway)</option>
+                  <option value="ghost_net">🕸️ Override: Submerged Gear & Debris (0.9% Leeway)</option>
+                  <option value="unclassified_debris">⚖️ Override: Unclassified Conservative Baseline (2.5% Leeway)</option>
+                </select>
+                <p className={`text-[9px] mt-1 ${isDark ? 'text-zinc-500' : 'text-slate-500'}`}>
+                  Overrides automated satellite spectral inference to test sensitivity or emergency scenarios.
+                </p>
               </div>
             </div>
           )}

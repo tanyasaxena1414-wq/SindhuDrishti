@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Navbar } from './components/navigation/Navbar';
 import { LandingPage } from './components/landing/LandingPage';
 import { MapPage } from './components/map/MapPage';
@@ -30,10 +31,11 @@ const getPathForTab = (tab: NavigationTab): string => {
   }
 };
 
-export default function App() {
+function AppContent() {
   const [currentTab, setCurrentTab] = useState<NavigationTab>(getInitialTab);
   const [currentBasin, setCurrentBasin] = useState<BasinId>('jayakwadi');
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
+  const { isDark } = useTheme();
 
   const handleSelectTab = useCallback((tab: NavigationTab) => {
     setCurrentTab(tab);
@@ -45,6 +47,11 @@ export default function App() {
     }
   }, []);
 
+  const handleSelectStudyArea = useCallback((basin: BasinId) => {
+    setCurrentBasin(basin);
+    handleSelectTab('explore-map');
+  }, [handleSelectTab]);
+
   // Listen to popstate for browser back/forward
   useEffect(() => {
     const handlePopState = () => {
@@ -55,8 +62,12 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-[#01040c] text-white flex flex-col font-['DM_Sans',sans-serif] selection:bg-[#38bdf8] selection:text-slate-950">
-      {/* Global Navbar */}
+    <div
+      className={`min-h-screen w-full flex flex-col font-sans transition-colors duration-200 selection:bg-[#18c9e8] selection:text-slate-950 ${
+        isDark ? 'bg-[#020817] text-[#f8fafc]' : 'bg-transparent text-[#071d3d]'
+      }`}
+    >
+      {/* Global Editorial Navbar */}
       <Navbar
         currentTab={currentTab}
         onSelectTab={handleSelectTab}
@@ -71,6 +82,7 @@ export default function App() {
           {currentTab === 'landing' && (
             <LandingPage
               onSelectTab={handleSelectTab}
+              onSelectBasin={handleSelectStudyArea}
               onOpenReportModal={() => setIsReportModalOpen(true)}
             />
           )}
@@ -102,10 +114,18 @@ export default function App() {
           isOpen={isReportModalOpen}
           onClose={() => setIsReportModalOpen(false)}
           onReportSubmitted={() => {
-            // If on landing or other tab, could navigate to reports or notify
+            // Optional feedback
           }}
         />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }

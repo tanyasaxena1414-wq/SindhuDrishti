@@ -227,6 +227,8 @@ export interface CleanupPriorityResponse {
 // ==========================================
 // 4. DRIFT SIMULATION
 // ==========================================
+export type DebrisType = 'rigid_plastic' | 'hyacinth_mat' | 'film_plastic' | 'ghost_net';
+
 export interface DriftSimulateRequest {
   latitude: number;
   longitude: number;
@@ -241,6 +243,8 @@ export interface DriftSimulateRequest {
   random_seed?: number;
   hotspot_id?: string;
   debris_name?: string;
+  debris_type?: DebrisType | string;
+  use_live_weather?: boolean;
 }
 
 export interface DriftTrajectoryPoint {
@@ -294,6 +298,24 @@ export interface FieldDispatchOrder {
   recommended_tactics: string[];
 }
 
+export interface DebrisClassificationMetadata {
+  category_id: string;
+  category_label: string;
+  short_name: string;
+  is_auto_classified: boolean;
+  is_default_profile: boolean;
+  downwind_leeway_factor: number;
+  crosswind_leeway_factor: number;
+  evidence_basis: string;
+  scientific_caveat: string;
+  spectral_metrics?: {
+    fdi_value?: number | null;
+    ndvi_value?: number | null;
+    spectral_class?: string;
+    area_m2?: number;
+  };
+}
+
 export interface DriftSummary {
   particle_count: number;
   duration_hours: number;
@@ -322,6 +344,13 @@ export interface DriftSummary {
   field_assets?: FieldAssetRequirement;
   economic_impact?: EconomicImpact;
   field_dispatch_order?: FieldDispatchOrder;
+  debris_type?: string;
+  debris_label?: string;
+  classification_metadata?: DebrisClassificationMetadata;
+  confidence_radius_m?: number;
+  p50_arrival_hour?: number;
+  p90_arrival_hour?: number;
+  gpx_export_available?: boolean;
 }
 
 export interface DriftSimulateResponse {

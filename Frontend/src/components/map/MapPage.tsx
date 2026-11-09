@@ -10,6 +10,7 @@ import {
 import { MapViewport } from './MapViewport';
 import { MapControls, MapLayerState } from './MapControls';
 import { Compass, RefreshCw, AlertTriangle } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface MapPageProps {
   currentBasin?: import('../../types').BasinId;
@@ -20,6 +21,7 @@ export const MapPage: React.FC<MapPageProps> = ({
   currentBasin = 'jayakwadi',
   onSelectBasin,
 }) => {
+  const { isDark } = useTheme();
   const [studyArea, setStudyArea] = useState<StudyAreaMetadata | null>(null);
   const [waterMasks, setWaterMasks] = useState<GeoJSONFeatureCollection<WaterMaskProperties> | null>(null);
   const [hotspots, setHotspots] = useState<GeoJSONFeatureCollection<HotspotProperties> | null>(null);
@@ -115,21 +117,37 @@ export const MapPage: React.FC<MapPageProps> = ({
   };
 
   return (
-    <div className="flex-1 w-full max-w-[1720px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-4 font-['DM_Sans',sans-serif]">
+    <div className="flex-1 w-full max-w-[1720px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-4 font-sans">
       {/* Workspace Subheader */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-sky-950/70">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-cyan-950/80 border border-cyan-800/60 flex items-center justify-center text-cyan-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
-            <Compass className="w-4 h-4" />
+      <div 
+        className={`flex flex-wrap items-center justify-between gap-3 pb-3 border-b transition-colors ${
+          isDark ? 'border-[#0e2a47]' : 'border-[#cbd5e1]'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div 
+            className={`w-9 h-9 rounded-xl flex items-center justify-center border shadow-sm ${
+              isDark 
+                ? 'bg-[#073b55] border-[#18c9e8]/40 text-[#18c9e8]' 
+                : 'bg-[#dceaf4] border-[#cbd5e1] text-[#0284c7]'
+            }`}
+          >
+            <Compass className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <h1 className="font-display text-base sm:text-lg font-bold tracking-tight flex items-center gap-2">
               <span>Geospatial Basin Explorer</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-800/40">
+              <span 
+                className={`text-[10px] font-mono px-2 py-0.5 rounded uppercase font-semibold ${
+                  isDark 
+                    ? 'bg-[#051324] text-[#18c9e8] border border-[#18c9e8]/30' 
+                    : 'bg-[#edf2f7] text-[#0284c7] border border-[#cbd5e1]'
+                }`}
+              >
                 Sentinel-2 L2A
               </span>
             </h1>
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-zinc-500">
               {studyArea?.study_area_name || 'Jayakwadi Reservoir / Nath Sagar'} · {studyArea?.region || 'Maharashtra, India'} · EPSG:4326 CRS
             </p>
           </div>
@@ -137,33 +155,49 @@ export const MapPage: React.FC<MapPageProps> = ({
 
         <div className="flex items-center gap-2.5">
           {/* Basin Switcher Pill */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#030919] border border-sky-800/60 text-xs font-mono shadow-[0_0_15px_rgba(56,189,248,0.15)]">
+          <div 
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono shadow-sm ${
+              isDark 
+                ? 'bg-[#051324] border-[#0e2a47] text-white' 
+                : 'bg-white border-[#cbd5e1] text-slate-800'
+            }`}
+          >
             <span className="text-zinc-500 text-[11px]">Basin:</span>
             <select
               aria-label="Map Target Watershed Basin"
               value={currentBasin}
               onChange={(e) => onSelectBasin && onSelectBasin(e.target.value as import('../../types').BasinId)}
-              className="bg-transparent text-cyan-300 font-bold focus:outline-none cursor-pointer text-xs"
+              className={`bg-transparent font-bold focus:outline-none cursor-pointer text-xs ${
+                isDark ? 'text-[#18c9e8]' : 'text-[#0284c7]'
+              }`}
             >
-              <option value="jayakwadi" className="bg-[#030919] text-white">🌊 Jayakwadi (Godavari)</option>
-              <option value="hussainsagar" className="bg-[#030919] text-white">🏙️ Hussain Sagar (Krishna)</option>
+              <option value="jayakwadi" className={isDark ? 'bg-[#020817] text-white' : 'bg-white text-slate-900'}>
+                🌊 Jayakwadi (Godavari)
+              </option>
+              <option value="hussainsagar" className={isDark ? 'bg-[#020817] text-white' : 'bg-white text-slate-900'}>
+                🏙️ Hussain Sagar (Krishna)
+              </option>
             </select>
           </div>
 
           <button
             onClick={loadData}
             disabled={isLoading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#030919] border border-sky-900/60 text-xs font-mono text-zinc-300 hover:text-white hover:border-cyan-400 transition-all cursor-pointer disabled:opacity-50"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer disabled:opacity-50 ${
+              isDark 
+                ? 'bg-[#051324] border-[#0e2a47] text-zinc-300 hover:text-white hover:border-[#18c9e8]' 
+                : 'bg-white border-[#cbd5e1] text-zinc-700 hover:text-black hover:border-[#0284c7]'
+            }`}
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-[#18c9e8]' : ''}`} />
             <span>Refresh Data</span>
           </button>
         </div>
       </div>
 
       {errorMessage && (
-        <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-800/50 flex items-center gap-3 text-xs text-amber-200">
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-3 text-xs text-amber-500">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}

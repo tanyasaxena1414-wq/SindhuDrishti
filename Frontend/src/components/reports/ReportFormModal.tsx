@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Send, MapPin, Image, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { api } from '../../services/api';
 import { ReportCreate } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 
 interface ReportFormModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
   onClose,
   onReportSubmitted,
 }) => {
+  const { isDark } = useTheme();
   const [formData, setFormData] = useState<ReportCreate>({
     latitude: '19.4935',
     longitude: '75.3850',
@@ -79,37 +81,47 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in select-none font-['DM_Sans',sans-serif]">
-      <div className="w-full max-w-lg bg-[#02071a] border border-sky-800/60 rounded-2xl p-6 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in select-none font-sans">
+      <div 
+        className={`w-full max-w-lg rounded-2xl p-6 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto border ${
+          isDark ? 'bg-[#020817] border-[#0e2a47] text-[#f8fafc]' : 'bg-white border-[#cbd5e1] text-[#0f172a]'
+        }`}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-sky-950">
+        <div className={`flex items-center justify-between pb-3 border-b ${isDark ? 'border-[#0e2a47]' : 'border-slate-200'}`}>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-cyan-950/80 border border-cyan-800/60 flex items-center justify-center text-cyan-300">
+            <div 
+              className={`w-8 h-8 rounded-xl flex items-center justify-center border ${
+                isDark ? 'bg-[#073b55] border-[#18c9e8]/50 text-[#18c9e8]' : 'bg-[#dceaf4] border-[#cbd5e1] text-[#0284c7]'
+              }`}
+            >
               <FileText className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">Log Citizen Pollution Report</h3>
+              <h3 className="text-sm font-bold">Log Citizen Pollution Report</h3>
               <p className="text-[11px] font-mono text-zinc-400">Community Observation Intake</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-sky-950 transition-colors cursor-pointer"
+            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+              isDark ? 'text-zinc-400 hover:text-white hover:bg-white/10' : 'text-zinc-500 hover:text-black hover:bg-black/5'
+            }`}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {errorMsg && (
-          <div className="p-3 rounded-xl bg-rose-950/30 border border-rose-800/40 text-xs text-rose-200 flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-500 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         {successMsg && (
-          <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-800/40 text-xs text-emerald-200 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-500 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
             <span>{successMsg}</span>
           </div>
         )}
@@ -119,7 +131,7 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
           {/* Coordinates */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[11px] font-mono text-zinc-400 block mb-1">
+              <label className="text-[11px] font-mono text-zinc-500 block mb-1">
                 Latitude (-90 to 90) *
               </label>
               <input
@@ -127,11 +139,13 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
                 required
                 value={formData.latitude}
                 onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
-                className="w-full bg-[#030919] border border-sky-950 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-cyan-400"
+                className={`w-full rounded-xl px-3 py-2 font-mono focus:outline-none border ${
+                  isDark ? 'bg-[#051324] border-[#0e2a47] text-white focus:border-[#18c9e8]' : 'bg-slate-50 border-[#cbd5e1] text-slate-900 focus:border-[#0284c7]'
+                }`}
               />
             </div>
             <div>
-              <label className="text-[11px] font-mono text-zinc-400 block mb-1">
+              <label className="text-[11px] font-mono text-zinc-500 block mb-1">
                 Longitude (-180 to 180) *
               </label>
               <input
@@ -139,88 +153,86 @@ export const ReportFormModal: React.FC<ReportFormModalProps> = ({
                 required
                 value={formData.longitude}
                 onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
-                className="w-full bg-[#030919] border border-sky-950 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-cyan-400"
+                className={`w-full rounded-xl px-3 py-2 font-mono focus:outline-none border ${
+                  isDark ? 'bg-[#051324] border-[#0e2a47] text-white focus:border-[#18c9e8]' : 'bg-slate-50 border-[#cbd5e1] text-slate-900 focus:border-[#0284c7]'
+                }`}
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="text-[11px] font-mono text-zinc-400 block mb-1">
+            <label className="text-[11px] font-mono text-zinc-500 block mb-1">
               Incident Description (min 10 characters) *
             </label>
             <textarea
-              required
               rows={3}
+              required
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Describe visible debris accumulation, shoreline condition, water discoloration..."
-              className="w-full bg-[#030919] border border-sky-950 rounded-xl px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-400 leading-relaxed"
+              placeholder="e.g. Dense plastic bottle cluster near Godavari reservoir shoreline intake..."
+              className={`w-full rounded-xl p-3 focus:outline-none border ${
+                isDark ? 'bg-[#051324] border-[#0e2a47] text-white focus:border-[#18c9e8]' : 'bg-slate-50 border-[#cbd5e1] text-slate-900 focus:border-[#0284c7]'
+              }`}
             />
           </div>
 
-          {/* Photo Upload & Preview */}
+          {/* Photo Upload & Sample */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-[11px] font-mono text-zinc-300 font-bold flex items-center gap-1.5">
-                <Image className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Field Evidence Photo</span>
+              <label className="text-[11px] font-mono text-zinc-500 flex items-center gap-1">
+                <Image className="w-3.5 h-3.5 text-cyan-500" />
+                <span>Field Evidence Photo (Optional)</span>
               </label>
               <button
                 type="button"
                 onClick={handleUseSamplePhoto}
-                className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-800/60 text-cyan-300 hover:text-white cursor-pointer"
+                className={`text-[10px] font-mono px-2 py-0.5 rounded border cursor-pointer ${
+                  isDark ? 'bg-[#073b55] border-[#18c9e8]/40 text-[#18c9e8]' : 'bg-slate-100 border-[#cbd5e1] text-[#0284c7]'
+                }`}
               >
                 Use Sample Photo
               </button>
             </div>
 
-            <div className="p-3 rounded-xl bg-[#030919] border border-sky-950 space-y-2">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="w-full text-xs text-zinc-400 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-mono file:bg-cyan-950 file:text-cyan-300 hover:file:bg-cyan-900 cursor-pointer"
-              />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className={`w-full rounded-xl p-2 font-mono text-[11px] border file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold ${
+                isDark 
+                  ? 'bg-[#051324] border-[#0e2a47] text-zinc-300 file:bg-[#073b55] file:text-[#18c9e8]' 
+                  : 'bg-slate-50 border-[#cbd5e1] text-zinc-700 file:bg-slate-200 file:text-slate-800'
+              }`}
+            />
 
-              {formData.photo_reference && (
-                <div className="relative mt-2 rounded-lg overflow-hidden border border-sky-900/60 max-h-36 flex items-center justify-center bg-black/50">
-                  <img
-                    src={formData.photo_reference}
-                    alt="Preview"
-                    className="max-h-36 object-contain"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, photo_reference: undefined })}
-                    className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/80 text-zinc-300 hover:text-white"
-                    title="Remove Photo"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )}
-            </div>
+            {formData.photo_reference && (
+              <div className="relative rounded-xl overflow-hidden border border-zinc-500/20 max-h-36 flex items-center justify-center bg-black/40">
+                <img
+                  src={formData.photo_reference}
+                  alt="Evidence preview"
+                  className="max-h-36 w-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, photo_reference: undefined })}
+                  className="absolute top-2 right-2 p-1 rounded-full bg-black/70 text-white hover:bg-black"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-2 border-t border-sky-950">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-[#030919] border border-sky-950 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-[#6095f6] text-slate-950 font-bold hover:from-sky-300 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50 shadow-lg"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>{isSubmitting ? 'Submitting...' : 'Submit Report'}</span>
-            </button>
-          </div>
+          {/* Submit CTA */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-[#18c9e8] to-[#0284c7] text-slate-950 font-bold text-xs hover:opacity-95 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+          >
+            <Send className="w-3.5 h-3.5" />
+            <span>{isSubmitting ? 'Submitting to SQLite...' : 'Submit Pollution Report'}</span>
+          </button>
         </form>
       </div>
     </div>

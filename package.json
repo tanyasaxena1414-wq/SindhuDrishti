@@ -1,0 +1,11 @@
+{
+  "name": "sindhudrishti",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "cd Frontend && npm run dev",
+    "build": "cd Frontend && npm run build",
+    "lint": "cd Frontend && npm run lint"
+  }
+}
+

@@ -1,51 +1,133 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+:root {
+  --bg-base: #020817;
+  --bg-surface: #071a2e;
+  --bg-card: #0b2540;
+  --bg-elevated: #0f3050;
+  --border-subtle: rgba(24, 201, 232, 0.16);
+  --border-strong: rgba(24, 201, 232, 0.35);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --cyan-accent: #18c9e8;
+  --ocean-blue: #073b55;
+  --ice-accent: #dceaf4;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+html.light {
+  --bg-base: #edf3f8;
+  --bg-surface: #e2ecf5;
+  --bg-card: #ffffff;
+  --bg-elevated: #ffffff;
+  --border-subtle: #cddce9;
+  --border-strong: #94b5d3;
+  --text-primary: #071d3d;
+  --text-secondary: #1a365d;
+  --text-muted: #486581;
+  --cyan-accent: #0284c7;
+  --ocean-blue: #0369a1;
+  --ice-accent: #e0f0fa;
+
+  color-scheme: light;
+}
+
 @layer base {
-  :root {
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
-  body {
-    background-color: #000000;
-    color: #ffffff;
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  html.light body {
+    background-color: #edf3f8;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 15% 60%, rgba(3, 105, 161, 0.04) 0%, transparent 40%),
+      radial-gradient(circle, #94a3b8 0.75px, transparent 0.75px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
+    background-attachment: fixed;
   }
+}
+
+.font-display {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-sans {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* Custom styling for inline-editable elements */
 [contenteditable="true"]:hover {
-  outline: 1px dashed rgba(6, 182, 212, 0.5);
+  outline: 1px dashed rgba(24, 201, 232, 0.5);
   cursor: text;
 }
 
 [contenteditable="true"]:focus {
-  outline: 1.5px solid #06b6d4;
+  outline: 1.5px solid var(--cyan-accent);
   border-radius: 4px;
 }
 
-/* Leaflet Dark Theme Overrides */
+/* Leaflet Dark & Light Theme Overrides */
 .leaflet-container {
-  background-color: #02050f !important;
-  font-family: 'DM Sans', sans-serif !important;
+  background-color: #020817 !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+html.light .leaflet-container {
+  background-color: #e2eaf2 !important;
 }
 
 .leaflet-popup-content-wrapper {
-  background-color: #02071a !important;
-  color: #f1f5f9 !important;
-  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  background-color: #071a2e !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(24, 201, 232, 0.35) !important;
   border-radius: 1rem !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85) !important;
   backdrop-filter: blur(16px) !important;
 }
 
+html.light .leaflet-popup-content-wrapper {
+  background-color: #ffffff !important;
+  color: #06152b !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 20px 25px -5px rgba(6, 21, 43, 0.12), 0 8px 10px -6px rgba(6, 21, 43, 0.08) !important;
+}
+
 .leaflet-popup-tip {
-  background-color: #02071a !important;
+  background-color: #071a2e !important;
+}
+
+html.light .leaflet-popup-tip {
+  background-color: #ffffff !important;
 }
 
 .leaflet-popup-content {
   margin: 12px 14px !important;
   line-height: 1.4 !important;
+}
+
+html.light .leaflet-popup-content {
+  color: #06152b !important;
+}
+
+html.light .leaflet-popup-content .popup-text-main {
+  color: #06152b !important;
+}
+
+html.light .leaflet-popup-content .popup-text-muted {
+  color: #4d6582 !important;
 }
 
 .leaflet-popup-close-button {
@@ -54,36 +136,88 @@
 }
 
 .leaflet-popup-close-button:hover {
-  color: #38bdf8 !important;
+  color: var(--cyan-accent) !important;
 }
 
-/* Custom Sleek Scrollbar for Modern Awwwards Look */
+html.light .leaflet-popup-close-button {
+  color: #64748b !important;
+}
+
+html.light .leaflet-bar {
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light .leaflet-bar a {
+  background-color: #ffffff !important;
+  color: #091e3a !important;
+  border-bottom: 1px solid #dbe4ee !important;
+}
+
+html.light .leaflet-bar a:hover {
+  background-color: #f1f5f9 !important;
+  color: #0284c7 !important;
+}
+
+html.light .leaflet-control-attribution {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #4d6582 !important;
+  border-radius: 4px;
+}
+
+html.light .leaflet-control-attribution a {
+  color: #0284c7 !important;
+}
+
+/* Tooltip light overrides */
+html.light .leaflet-tooltip-dark {
+  background-color: #ffffff !important;
+  color: #06152b !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 10px 15px -3px rgba(6, 21, 43, 0.1) !important;
+}
+
+html.light .leaflet-tooltip-dark b {
+  color: #06152b !important;
+}
+
+/* Sleek Minimal Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #020614;
+  background: #020817;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #0e2b5c;
   border-radius: 9999px;
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(24, 201, 232, 0.2);
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border: 1px solid #94a3b8;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0284c7;
+  background: var(--cyan-accent);
 }
 
-/* Glassmorphism Ambient Glows */
-.glass-glow {
-  box-shadow: 0 0 50px -12px rgba(6, 182, 212, 0.18);
+/* Subtle Reticle and Boundary Pulse */
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.text-glow {
-  text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+.animate-radar {
+  animation: radar-sweep 12s linear infinite;
 }
 
 /* Print Media Stylesheet for Drift Prediction & Dispatch Reports */

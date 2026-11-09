@@ -1,6 +1,14 @@
 from datetime import datetime, timezone
+from enum import Enum
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field, field_validator, ConfigDict
+
+
+class DebrisType(str, Enum):
+    RIGID_PLASTIC = "rigid_plastic"      # PET bottles, HDPE jugs, styrofoam (High Windage)
+    HYACINTH_MAT = "hyacinth_mat"        # Water hyacinth & trapped macroplastics
+    FILM_PLASTIC = "film_plastic"        # Polybags, flexible film, wrappers
+    GHOST_NET = "ghost_net"              # Submerged nets, ropes, fishing gear
 
 
 class DriftSimulateRequest(BaseModel):
@@ -17,6 +25,8 @@ class DriftSimulateRequest(BaseModel):
     random_seed: Optional[int] = Field(42, description="Random seed for reproducibility")
     hotspot_id: Optional[str] = Field(None, description="Optional ID of specific detected debris hotspot to track")
     debris_name: Optional[str] = Field(None, description="Optional name of specific detected debris hotspot")
+    debris_type: Optional[str] = Field("rigid_plastic", description="Physical debris typology for leeway modeling")
+    use_live_weather: bool = Field(True, description="Whether to query live ECMWF/GFS hourly wind forcing")
 
     @field_validator("latitude")
     @classmethod

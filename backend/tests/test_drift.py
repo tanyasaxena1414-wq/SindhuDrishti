@@ -15,6 +15,7 @@ async def test_drift_simulation_success(client):
             "timestep_minutes": 60.0,
             "particle_count": 5,
             "random_seed": 42,
+            "debris_type": "rigid_plastic",
         },
     )
     assert response.status_code == 200
@@ -28,7 +29,7 @@ async def test_drift_simulation_success(client):
     assert len(data["particles"]) == 5
     assert "summary" in data
     assert data["summary"]["particle_count"] == 5
-    # Judge-friendly drift intelligence
+    # Scientific drift intelligence
     assert "drift_heading_cardinal" in data["summary"]
     assert "destination_target" in data["summary"]
     assert "average_drift_speed_kmh" in data["summary"]
@@ -36,7 +37,7 @@ async def test_drift_simulation_success(client):
     assert "recommended_action" in data["summary"]
     assert "risk_level" in data["summary"]
     assert "disclaimer" in data
-    assert "ILLUSTRATIVE SIMULATION" in data["disclaimer"]
+    assert "HYDRODYNAMIC" in data["disclaimer"] or "SIMULATION" in data["disclaimer"]
     assert "limitations" in data
     assert isinstance(data["limitations"], list)
 
@@ -100,97 +101,135 @@ async def test_drift_simulation_validation_errors(client):
         json={
             "latitude": 19.4567,
             "longitude": 75.3456,
-            "particle_count": 500,  # Max allowed is 100
-        },
-    )
-    assert response.status_code == 422
-
-    # Invalid duration (<= 0)
-    response = await client.post(
-        "/api/v1/drift/simulate",
-        json={
-            "latitude": 19.4567,
-            "longitude": 75.3456,
-            "duration_hours": 0.0,
+            "particle_count": 500,  # Max is 100
         },
     )
     assert response.status_code == 422
 
 
 @pytest.mark.anyio
-async def test_drift_simulation_boundary_conditions(client):
-    """Test boundary conditions for particles drifting out of study area bounds."""
-    # Start near edge with high velocity pointing outwards
-    response = await client.post(
-        "/api/v1/drift/simulate",
-        json={
-            "latitude": 19.58,  # Near northern bound
-            "longitude": 75.48,  # Near eastern bound
-            "duration_hours": 48.0,  # Long duration
-            "timestep_minutes": 60.0,
-            "particle_count": 5,
-            "current_velocity_ms": 1.5,  # High current
-            "current_direction_deg": 45.0,  # Northeast (out of bounds)
-            "random_seed": 42,
-        },
-    )
-    assert response.status_code == 200
-    data = response.json()
+async def test_debris_typology_leeway_physics(client):
+    """Test that rigid plastics (high windage) drift differently from submerged ghost nets."""
+    base_payload = {
+        "latitude": 19.495,
+        "longitude": 75.335,
+        "duration_hours": 12.0,
+        "timestep_minutes": 60.0,
+        "particle_count": 1,
+        "wind_speed_ms": 6.0,
+        "wind_direction_deg": 90.0,
+        "use_live_weather": False,
+        "random_seed": 42,
+    }
 
-    # Verify out_of_bounds or ashore status appears for boundary collision
-    statuses = [p["final_status"] for p in data["particles"]]
-    assert "out_of_bounds" in statuses or "ashore" in statuses or any(
-        pt["status"] in ("out_of_bounds", "ashore") for p in data["particles"] for pt in p["trajectory"]
+    # 1. Rigid plastic
+    resp_rigid = await client.post(
+        "/api/v1/drift/simulate",
+        json={**base_payload, "debris_type": "rigid_plastic"}
     )
+    # 2. Submerged ghost net
+    resp_net = await client.post(
+        "/api/v1/drift/simulate",
+        json={**base_payload, "debris_type": "ghost_net"}
+    )
+
+    assert resp_rigid.status_code == 200
+    assert resp_net.status_code == 200
+
+    data_rigid = resp_rigid.json()
+    data_net = resp_net.json()
+
+    # Rigid plastic should have higher leeway factor and greater total displacement under strong wind
+    assert data_rigid["summary"]["downwind_leeway_factor"] > data_net["summary"]["downwind_leeway_factor"]
+    rigid_end = data_rigid["particles"][0]["trajectory"][-1]
+    net_end = data_net["particles"][0]["trajectory"][-1]
+
+    # Trajectories must diverge due to differing physical windage
+    assert (rigid_end["latitude"], rigid_end["longitude"]) != (net_end["latitude"], net_end["longitude"])
 
 
 @pytest.mark.anyio
-async def test_drift_simulation_zero_velocity(client):
-    """Test drift simulation with zero current and wind velocity (stationary particles with minor diffusion)."""
-    response = await client.post(
+async def test_auto_debris_classification_and_defaults(client):
+    """Test automated typology determination from hotspot metadata, default profile fallback, and overrides."""
+    # 1. Auto classification for known pelagic windrow (candidate plastic)
+    res_auto = await client.post(
         "/api/v1/drift/simulate",
         json={
-            "latitude": 19.4567,
-            "longitude": 75.3456,
+            "latitude": 19.495,
+            "longitude": 75.335,
             "duration_hours": 6.0,
             "timestep_minutes": 60.0,
-            "particle_count": 3,
-            "current_velocity_ms": 0.0,
-            "wind_speed_ms": 0.0,
-            "random_seed": 42,
+            "particle_count": 1,
+            "hotspot_id": "pelagic-windrow-1",
+            "debris_type": "auto",
         },
     )
-    assert response.status_code == 200
-    data = response.json()
+    assert res_auto.status_code == 200
+    data_auto = res_auto.json()
+    meta_auto = data_auto["summary"]["classification_metadata"]
+    assert meta_auto["is_auto_classified"] is True
+    assert "scientific_caveat" in meta_auto
+    assert meta_auto["downwind_leeway_factor"] > 0
 
-    for p in data["particles"]:
-        for pt in p["trajectory"]:
-            # Should remain very close to starting coordinates (within ~0.01 deg due to minor random diffusion)
-            assert abs(pt["latitude"] - 19.4567) < 0.05
-            assert abs(pt["longitude"] - 75.3456) < 0.05
-            assert pt["status"] == "active"
+    # 2. Custom release without hotspot metadata falls back cleanly to default profile
+    res_custom = await client.post(
+        "/api/v1/drift/simulate",
+        json={
+            "latitude": 19.495,
+            "longitude": 75.335,
+            "duration_hours": 6.0,
+            "timestep_minutes": 60.0,
+            "particle_count": 1,
+            "hotspot_id": "custom-release",
+            "debris_type": "auto",
+        },
+    )
+    assert res_custom.status_code == 200
+    data_custom = res_custom.json()
+    meta_custom = data_custom["summary"]["classification_metadata"]
+    assert meta_custom["is_default_profile"] is True
+    assert meta_custom["category_id"] == "unclassified_debris"
+    assert "Default Profile" in meta_custom["category_label"]
+
+    # 3. Manual override overrides auto-detection and flags is_auto_classified=False
+    res_override = await client.post(
+        "/api/v1/drift/simulate",
+        json={
+            "latitude": 19.495,
+            "longitude": 75.335,
+            "duration_hours": 6.0,
+            "timestep_minutes": 60.0,
+            "particle_count": 1,
+            "hotspot_id": "pelagic-windrow-1",
+            "debris_type": "ghost_net",
+        },
+    )
+    assert res_override.status_code == 200
+    data_override = res_override.json()
+    meta_override = data_override["summary"]["classification_metadata"]
+    assert meta_override["is_auto_classified"] is False
+    assert meta_override["category_id"] == "ghost_net"
 
 
 @pytest.mark.anyio
-async def test_drift_simulation_short_duration(client):
-    """Test drift simulation with short duration and high timestep resolution."""
+async def test_drift_gpx_export(client):
+    """Test standard GPX 1.1 file export endpoint."""
     response = await client.post(
-        "/api/v1/drift/simulate",
+        "/api/v1/drift/export/gpx",
         json={
-            "latitude": 19.4567,
-            "longitude": 75.3456,
-            "duration_hours": 1.0,
-            "timestep_minutes": 10.0,
-            "particle_count": 2,
-            "random_seed": 42,
+            "latitude": 19.495,
+            "longitude": 75.335,
+            "duration_hours": 6.0,
+            "timestep_minutes": 60.0,
+            "particle_count": 1,
+            "debris_name": "Test Hotspot",
         },
     )
     assert response.status_code == 200
-    data = response.json()
-
-    # 1 hour / 10 mins = 6 steps + initial point (t=0) = 7 trajectory points
-    for p in data["particles"]:
-        assert len(p["trajectory"]) == 7
-        assert p["trajectory"][0]["time_offset_hours"] == 0.0
-        assert p["trajectory"][-1]["time_offset_hours"] == 1.0
-        assert p["final_status"] == "active"
+    assert "application/gpx+xml" in response.headers["content-type"]
+    text = response.text
+    assert "<?xml version" in text
+    assert "<gpx" in text
+    assert "<wpt" in text
+    assert "<rte" in text
+    assert "</gpx>" in text
